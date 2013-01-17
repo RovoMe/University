@@ -1,0 +1,12 @@
+*.class
+
+*.war
+*.ear
+
+DST - Assignment1 - 0105011.zip
+
+bin
+
+.project
+.classpath
+.settings

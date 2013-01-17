@@ -1,0 +1,48 @@
+package MowerSystem {
+	class ChargingUnit {
+		ref Mower mowers (0..2) oppositeOf chargingUnit
+		ref Mower currentMower (0..1)
+		op finished()
+		op charge (Complex Class Mower mower)
+		stateMachine {
+			state ready {
+				charge => busy {
+					self -> currentMower = mower;
+				}
+			}
+			state busy onEntryCall finished{
+				finished => ready {
+					self -> currentMower -> charged;
+				}
+			}
+			-> ready // this indicates the initial state
+		}
+	}
+	class Mower {
+		att String name (1..1)
+		ref ChargingUnit chargingUnit (1..1) oppositeOf mowers
+		op driveToChargingUnit()
+		op charged()
+		op mow()
+		op retryCharging()
+		stateMachine {
+			state charged onEntryCall mow {
+				mow => lowBattery
+			}
+			state lowBattery onEntryCall  driveToChargingUnit {
+				driveToChargingUnit => waiting unless self -> chargingUnit inState busy
+				driveToChargingUnit => charging unless self -> chargingUnit inState ready {
+					self -> chargingUnit -> charge (mower = self) ;			
+				}
+			}
+			state charging {
+				charged => charged
+			}
+			state waiting onEntryCall  retryCharging {
+				retryCharging => lowBattery
+			}
+			-> charged
+		}
+	}
+}
+

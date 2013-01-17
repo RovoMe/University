@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?eclipse version="3.4"?>
+<plugin>
+   <extension
+         point="org.eclipse.emf.ecore.generated_package">
+      <package
+            class="at.ac.tuwien.big.me.ws11.sooml.SOOMLPackage"
+            genModel="model/sooml.genmodel"
+            uri="http://www.big.tuwien.ac.at/me/ws11/sooml">
+      </package>
+   </extension>
+
+</plugin>

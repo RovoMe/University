@@ -1,0 +1,54 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core">
+	<h:head>
+		<meta http-equiv="Content-Type" content="text/html; charset=UFT-8" />
+		<title>#{m.app_title} - #{m.grid_pageName}</title>
+	</h:head>
+    <h:body>
+        <h1>#{m.grid_title}</h1>
+        <h:form id="grid">
+	        <h:dataTable border="1" value="#{overview.gridList}" var="g">
+	        	<h:column>
+	        		<f:facet name="header">#{m.grid_id}</f:facet>#{g.id}
+	        	</h:column>
+	        	<h:column>
+	        		<f:facet name="header">#{m.grid_name}</f:facet>#{g.name}
+	        	</h:column>
+	        	<h:column>
+	        		<f:facet name="header">#{m.grid_location}</f:facet>#{g.location}
+	        	</h:column>
+	        	<h:column>
+	        		<f:facet name="header">#{m.grid_costPerCPUMinute}</f:facet>#{g.costPerCPUMinute}
+	        	</h:column>
+	        	<h:column>
+	        		<f:facet name="header">#{m.grid_amountOfFreeCPUs}</f:facet>#{g.availableCPUs}
+	        	</h:column>
+	        	<h:column>
+	        		<f:facet name="header" />
+	        		<h:button outcome="#{m.job_page}" value="#{m.grid_addJob}">
+	        			<f:param name="#{m.job_id}" value="#{g.id}" />
+	        		</h:button>
+	        	</h:column>
+	        </h:dataTable>
+	        <h:message for="grid" binding="#{message.message}"></h:message>
+	        <p></p>
+	        <h:outputLink value="#{m.home_page}">#{m.home_pageName}</h:outputLink>
+	        <h:outputLabel value="#{m.app_linkSeperator}" />
+	        <h:outputLink value="#{m.register_page}" rendered="#{gms.isLoaded and !login.loggedIn}">#{m.register_pageName}</h:outputLink>
+	        <h:outputLabel value="#{m.app_linkSeperator}" rendered="#{gms.isLoaded and !login.loggedIn}"/> 
+	        <h:outputLink value="#{m.login_page}" rendered="#{gms.isLoaded and !login.loggedIn}">#{m.login_pageName}</h:outputLink>
+	        <h:commandLink action="#{login.doLogout}" rendered="#{gms.isLoaded and login.loggedIn}">
+	        	<h:outputFormat value="#{m.login_logoutName}">
+	        		<f:param value="#{login.userName}" />
+	        	</h:outputFormat>
+	        </h:commandLink>
+	        <h:outputLabel value="#{m.app_linkSeperator}" />
+	        <h:outputLink value="#{m.assignment_page}">#{m.assignment_pageName}</h:outputLink>
+	        <h:outputLabel value="#{m.app_linkSeperator}" />
+	        <h:outputLink value="#{m.search_page}">#{m.search_pageName}</h:outputLink>
+    	</h:form>
+    </h:body>
+</html>

@@ -1,0 +1,45 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core">
+	<h:head>
+		<meta http-equiv="Content-Type" content="text/html; charset=UFT-8" />
+		<title>#{m.app_title} - #{m.login_pageName}</title>
+		<style type="text/css">
+			.col { width: 150px; display: block; }
+			.error { color: red; font-size: 14px; }
+		</style>
+	</h:head>
+    <h:body>
+    	<f:view>
+    		<h1>#{login_title}</h1>
+    		<h:form id="loginForm">
+    			<h:panelGrid id="loginGrid" border="1" columns="1" style="font-size: 16px;">
+    				<f:facet id="header" name="header">
+		    			<h:outputText id="header_text" value="#{m.login_text}"/>
+		    		</f:facet>
+    				<h:panelGrid id="login_panelGrid" columns="3">
+				    	<h:outputText id="username_txt" styleClass="col" value="#{m.login_username}"/>
+				   		<h:inputText id="username" required="true" value="#{login.userName}" />
+				   		<h:message for="username" styleClass="error" />
+				   		<h:outputText id="password_txt" styleClass="col" value="#{m.login_password}"/>
+				   		<h:inputSecret id="password" required="true" value="#{login.password}" />
+			    		<h:message for="password" styleClass="error" />
+			    	</h:panelGrid>
+			    	<f:facet id="footer" name="footer">
+		    			<h:panelGroup>
+			          		<h:commandButton id="loginButton" value="#{m.login_submit}" type="submit" action="#{login.doLogin}" />
+			          		<h:commandButton id="resettButton" value="#{m.login_reset}" type="reset"/>
+		          		</h:panelGroup>
+	          		</f:facet>
+    			</h:panelGrid>
+    			<f:event id="login_error" type="postValidate" listener="#{login.validate}"/>
+			    <h:messages for="loginForm" styleClass="error" binding="#{message.message}"/>
+    		</h:form>
+    		<h:outputLink value="#{m.home_page}">#{m.home_pageName}</h:outputLink>
+    		<h:outputText value="#{m.app_linkSeperator}" />
+    		<h:outputLink value="#{m.register_page}">#{m.register_pageName}</h:outputLink>
+    	</f:view>
+    </h:body>
+</html>

@@ -1,0 +1,67 @@
+<?xml version="1.0" encoding="ASCII"?>
+<sooml:Package xmi:version="2.0" xmlns:xmi="http://www.omg.org/XMI" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:sooml="http://www.big.tuwien.ac.at/me/ws11/sooml" name="MowerSystem">
+  <classes name="ChargingUnit">
+    <stateMachine initialState="//@classes.0/@stateMachine/@states.0">
+      <states name="ready">
+        <transitions target="//@classes.0/@stateMachine/@states.1">
+          <actions xsi:type="sooml:ReferenceAssignmentAction" parameter="//@classes.0/@operations.1/@parameter.0" reference="//@classes.0/@features.1"/>
+          <event operation="//@classes.0/@operations.1"/>
+        </transitions>
+      </states>
+      <states name="busy">
+        <transitions target="//@classes.0/@stateMachine/@states.0">
+          <actions xsi:type="sooml:CallReferenceOperationAction" calledOperation="//@classes.1/@operations.1" callObjectViaReference="//@classes.0/@features.1"/>
+          <event operation="//@classes.0/@operations.0"/>
+        </transitions>
+        <entryOperation calledOperation="//@classes.0/@operations.0"/>
+      </states>
+    </stateMachine>
+    <operations name="finished"/>
+    <operations name="charge">
+      <parameter name="mower" dataType="Complex" classType="//@classes.1"/>
+    </operations>
+    <features xsi:type="sooml:Reference" name="mowers" upperBound="2" type="//@classes.1" opposite="//@classes.1/@features.1"/>
+    <features xsi:type="sooml:Reference" name="currentMower" type="//@classes.1"/>
+  </classes>
+  <classes name="Mower">
+    <stateMachine initialState="//@classes.1/@stateMachine/@states.0">
+      <states name="charged">
+        <transitions target="//@classes.1/@stateMachine/@states.1">
+          <event operation="//@classes.1/@operations.2"/>
+        </transitions>
+        <entryOperation calledOperation="//@classes.1/@operations.2"/>
+      </states>
+      <states name="lowBattery">
+        <transitions target="//@classes.1/@stateMachine/@states.3">
+          <guard xsi:type="sooml:ReferenceIsInStateCondition" inState="//@classes.0/@stateMachine/@states.1" reference="//@classes.1/@features.1"/>
+          <event operation="//@classes.1/@operations.0"/>
+        </transitions>
+        <transitions target="//@classes.1/@stateMachine/@states.2">
+          <actions xsi:type="sooml:CallReferenceOperationAction" calledOperation="//@classes.0/@operations.1" callObjectViaReference="//@classes.1/@features.1">
+            <parameter parameterBinding="//@classes.0/@operations.1/@parameter.0"/>
+          </actions>
+          <guard xsi:type="sooml:ReferenceIsInStateCondition" inState="//@classes.0/@stateMachine/@states.0" reference="//@classes.1/@features.1"/>
+          <event operation="//@classes.1/@operations.0"/>
+        </transitions>
+        <entryOperation calledOperation="//@classes.1/@operations.0"/>
+      </states>
+      <states name="charging">
+        <transitions target="//@classes.1/@stateMachine/@states.0">
+          <event operation="//@classes.1/@operations.1"/>
+        </transitions>
+      </states>
+      <states name="waiting">
+        <transitions target="//@classes.1/@stateMachine/@states.1">
+          <event operation="//@classes.1/@operations.3"/>
+        </transitions>
+        <entryOperation calledOperation="//@classes.1/@operations.3"/>
+      </states>
+    </stateMachine>
+    <operations name="driveToChargingUnit"/>
+    <operations name="charged"/>
+    <operations name="mow"/>
+    <operations name="retryCharging"/>
+    <features xsi:type="sooml:Attribute" name="name" lowerBound="1"/>
+    <features xsi:type="sooml:Reference" name="chargingUnit" lowerBound="1" type="//@classes.0" opposite="//@classes.0/@features.0"/>
+  </classes>
+</sooml:Package>

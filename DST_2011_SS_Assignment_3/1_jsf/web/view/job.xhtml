@@ -1,0 +1,62 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core">
+	<h:head>
+		<meta http-equiv="Content-Type" content="text/html; charset=UFT-8" />
+		<title>#{m.app_title} - #{m.job_pageName}</title>
+		<style type="text/css">
+			.col { width: 180px; display: block; }
+			.error { color: red; font-size: 14px; }
+		</style>
+	</h:head>
+    <h:body>
+        <h1>#{m.job_title}</h1>
+        <f:view>
+        	<h:form id="addJobForm">
+        		<h:panelGrid border="1" columns="1">
+        			<h:panelGrid columns="2">
+	        			<f:facet name="header">
+			    			<h:outputText value="#{m.job_text}" styleClass="title-panel-text"/>
+			    		</f:facet>
+			    		
+			        	<h:outputLabel value="#{m.job_gridId}" styleClass="col" />
+			        	<h:inputText id="gridID" value="#{addJob.gridId}" disabled="true" required="true">
+			        		<f:convertNumber type="number" />
+			        		<f:validateLongRange minimum="0" maximum="#{m.job_maxGridId}" />
+			        	</h:inputText>
+			        	<h:outputLabel value="#{m.job_numCPUs}" styleClass="col" />
+			        	<h:inputText id="numCPUs" value="#{addJob.numberOfCPUs}" required="true">
+			        		<f:convertNumber type="number"/>
+			        		<f:validateLongRange minimum="1" maximum="#{m.job_maxCPUs}"/>
+			        	</h:inputText>
+			        	<h:outputLabel value="#{m.job_workflow}" styleClass="col" />
+			        	<h:inputText id="workflow" value="#{addJob.workflow}" />
+			        	<h:outputText value="#{m.job_parameters}" styleClass="col"/>
+			        	<h:panelGrid columns="1" cellpadding="0" cellspacing="0">
+				        	<h:inputText id="param1" value="#{addJob.param1}" />
+				        	<h:inputText id="param2" value="#{addJob.param2}" />
+				        	<h:inputText id="param3" value="#{addJob.param3}" />
+				        	<h:inputText id="param4" value="#{addJob.param4}" />
+				        	<h:inputText id="param5" value="#{addJob.param5}" />
+			        	</h:panelGrid>
+			        	<f:facet name="footer">
+				    		<h:panelGroup>
+					        	<h:commandButton id="submitButton" value="#{m.job_submit}" action="#{addJob.addJob}" type="submit" >
+					        		<f:param name="#{m.job_id}" value="#{addJob.gridId}" />
+					        	</h:commandButton>
+					        	<h:commandButton id="resetButton" value="#{m.job_reset}" action="#{addJob.doReset}" type="reset" />
+				        	</h:panelGroup>
+			        	</f:facet>
+		        	</h:panelGrid>
+	        	</h:panelGrid>
+	        	<h:message for="addJobForm" id="addJobError" styleClass="error" binding="#{message.message}"/>
+        	</h:form>
+        	
+	        <h:outputLink value="#{m.home_page}">#{m.home_pageName}</h:outputLink>
+	        <h:outputLabel value="#{m.app_linkSeperator}" />
+	        <h:outputLink value="#{m.grid_page}">#{m.grid_pageName}</h:outputLink>
+        </f:view>
+    </h:body>
+</html>

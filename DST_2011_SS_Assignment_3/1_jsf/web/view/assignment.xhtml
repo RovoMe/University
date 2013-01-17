@@ -1,0 +1,52 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core">
+	<h:head>
+		<meta http-equiv="Content-Type" content="text/html; charset=UFT-8" />
+		<title>#{m.app_title} - #{m.assignement_pageName}</title>
+		<style type="text/css">
+			.col { width: 180px; display: block; }
+			.error { color: red; font-size: 14px; }
+		</style>
+	</h:head>
+    <h:body>
+        <h1>#{m.assignment_title}</h1>
+        <f:view>
+        	<h:form id="tempJobForm">
+        		<h:dataTable border="1" value="#{assignJob.tempJobsList}" var="t">
+        			<h:column>
+	        			<f:facet name="header">#{m.assignment_gridId}</f:facet>
+	        			#{t.gridId}
+	        		</h:column>
+	        		<h:column>
+	        			<f:facet name="header">#{m.assignment_numJobs}</f:facet>
+	        			#{t.numTempJobs}
+	        		</h:column>
+	        		<h:column>
+	        			<f:facet name="header" />
+	        			<h:commandButton value="#{m.assignment_removeBttn}" action="#{assignJob.doRemove}" type="submit" disabled="#{t.numTempJobs eq 0}">
+	        				<f:param name="#{m.assignment_param}" value="#{t.gridId}"/>
+	        			</h:commandButton>
+	        		</h:column>
+        		</h:dataTable>
+        		<h:commandButton value="#{m.assignment_submitBttn}" action="#{assignJob.doAssign}" type="submit" disabled="#{!assignJob.submittable}" />
+        		<h:message for="tempJobForm" binding="#{message.message}" styleClass="error" />
+        		
+        		<p/>
+        		<h:outputLink value="#{m.grid_page}" rendered="#{gms.isLoaded}">#{m.grid_pageName}</h:outputLink>
+        		<h:outputLabel value="#{m.app_linkSeperator}" rendered="#{gms.isLoaded}"/>
+        		<h:outputLink value="#{m.register_page}" rendered="#{gms.isLoaded and !login.loggedIn}">#{m.register_pageName}</h:outputLink>
+        		<h:outputLabel value="#{m.app_linkSeperator}" rendered="#{gms.isLoaded and !login.loggedIn}"/> 
+        		<h:outputLink value="#{m.login_page}" rendered="#{gms.isLoaded and !login.loggedIn}">#{m.login_pageName}</h:outputLink>
+        		<h:commandLink action="#{login.doLogout}" rendered="#{gms.isLoaded and login.loggedIn}">
+        			<h:outputFormat value="#{m.login_logoutName}">
+        				<f:param value="#{login.userName}" />
+        			</h:outputFormat>
+        		</h:commandLink>
+        		
+        	</h:form>
+        </f:view>
+    </h:body>
+</html>

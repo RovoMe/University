@@ -1,0 +1,43 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core">
+    <h:head>
+        <meta http-equiv="Content-Type" content="text/html; charset=UFT-8" />
+        <title>#{m.app_title}</title>
+    </h:head>
+    <h:body>
+        <h1>#{m.app_title}</h1>
+        <f:view>
+            <h:form id="form">
+                <h:panelGrid styleClass="title-panel">
+                    <h:outputText value="#{m.home_welcome}" styleClass="title-panel-text"/>
+                    <h:outputText value="#{m.home_text}" styleClass="title-panel-subtext"/>
+                </h:panelGrid>
+                <div style="color: black; font-size: 16px;">#{m.home_subText}</div>
+                <h:panelGrid columns="2" style="font-size: 18px;">
+                    <h:commandButton id="loadButton" disabled="#{gms.isLoaded}" value="Initialize Data" action="#{gms.loadData}" />
+                    <h:commandButton id="unloadButton" disabled="#{!gms.isLoaded}" value="Unload Data" action="#{gms.unloadData}" />
+                </h:panelGrid>
+        		<h:message for="form" id="gmsMsg" binding="#{gms.message}"/>
+            	
+	            <p></p>
+	            <h:outputLink value="#{m.grid_page}" rendered="#{gms.isLoaded}">#{m.grid_pageName}</h:outputLink>
+	            <h:outputLabel value="#{m.app_linkSeperator}" rendered="#{gms.isLoaded}"/>
+	            <h:outputLink value="#{m.register_page}" rendered="#{gms.isLoaded and !login.loggedIn}">#{m.register_pageName}</h:outputLink>
+	            <h:outputLabel value="#{m.app_linkSeperator}" rendered="#{gms.isLoaded and !login.loggedIn}"/>
+	            <h:outputLink value="#{m.login_page}" rendered="#{gms.isLoaded and !login.loggedIn}">#{m.login_pageName}</h:outputLink>
+	            <h:commandLink action="#{login.doLogout}" rendered="#{gms.isLoaded and login.loggedIn}">
+	                <h:outputFormat value="#{m.login_logoutName}">
+	                    <f:param value="#{login.userName}" />
+	                </h:outputFormat>
+	            </h:commandLink>
+	            <h:outputLabel value="#{m.app_linkSeperator}" rendered="#{gms.isLoaded}"/>
+	            <h:outputLink value="#{m.search_page}" rendered="#{gms.isLoaded}">#{m.search_pageName}</h:outputLink>
+	            <h:outputLabel value="#{m.app_linkSeperator}" rendered="#{gms.isLoaded}"/>
+	            <h:outputLink value="#{m.audit_page}" rendered="#{gms.isLoaded}">#{m.audit_pageName}</h:outputLink>
+			</h:form>
+        </f:view>
+    </h:body>
+</html>

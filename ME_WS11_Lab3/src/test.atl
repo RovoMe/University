@@ -1,0 +1,401 @@
+-- @path SOOPL=/ME_WS11_Lab3/model/soopl.ecore
+-- @path SOOML=/ME_WS11_Lab3/model/sooml.ecore
+-- @nsURI soopl="http://www.big.tuwien.ac.at/me/ws11/soopl"
+
+module sooml2soopl;
+create OUT: SOOPL from IN: SOOML;
+
+-- uses LIB;
+
+helper def: firstUpper(str:String) : String = 
+	str.substring(1, 1).toUpper() + str.substring(2, str.size());
+
+helper context SOOML!State def : getStateMachineOfState() :
+	SOOML!StateMachine = SOOML!StateMachine.allInstances() -> select (sm | sm.states -> includes(self)).first();
+
+helper context SOOML!Event def : getTransitionsForEvent() :
+	SOOML!Transition = SOOML!Transition.allInstances() -> select(t1 | self->includes(t1.event)); 
+
+helper context SOOML!State def : getEventForState() :
+	SOOML!Event = self.getTransitionForState() -> collect(t | t.event);
+
+helper context SOOML!State def : getTransitionForState() :
+	SOOML!Transition = SOOML!Transition.allInstances() -> select(t | t.target=self);
+
+-- Lazy rules should be used when it is not possible to directly match an element from the source model.
+-- http://www.eclipse.org/m2m/atl/basicExamples_Patterns/article.php?file=Port/index.html
+		
+-- for issues with rule inheritance
+-- *) input pattern variables names have to be the same in super and sub rules.
+-- *) output pattern variables names have to be the same in super and sub rules for output pattern you want the union.
+-- http://www.eclipse.org/forums/index.php/t/221740/
+
+-- 1
+lazy abstract rule NamedElement2NamedElement
+{
+	from
+		i : SOOML!NamedElement -- abstract
+	to
+		o : SOOPL!NamedElement -- abstract
+		(
+			name <- i.name	
+		)
+}
+
+-- 2
+rule Package2Package
+{
+	from
+		i : SOOML!Package
+	to
+		o : SOOPL!Package 
+		(		
+			name <- i.name,
+			classes <- i.classes,
+			classes <- i.classes -> collect(cls | cls.stateMachine),
+			classes <- i.classes -> collect(cls | cls.stateMachine.states),
+			parentPackage <- i.parentPackage,
+			packages <- i.packages
+		)
+}
+
+-- 3
+lazy abstract rule DataType2DataType
+{
+	from
+		i : SOOML!DataType (i <> #Complex)
+	to
+		o : SOOPL!DataType -- abstract
+		(
+				
+		)
+}
+
+abstract rule Class2Class
+{
+	from
+		class : SOOML!Class
+	to
+		cls : SOOPL!Class
+		(
+			
+		)
+}
+
+-- 4
+rule Class2StatefulClass extends Class2Class
+{
+	from
+		class : SOOML!Class
+	to
+		cls : SOOPL!StatefulClass
+		(
+			name <- class.name,
+			stateClass <- class.stateMachine,
+			initialState <- class.stateMachine.initialState,
+			properties <- class.features
+		)
+}
+
+--5
+abstract rule StructuralFeature2Property
+{	
+	from 
+		feature : SOOML!StructuralFeature
+	to
+		property : SOOPL!Property
+		(
+			name <- feature.name,
+			upperBound <- feature.upperBound,
+			lowerBound <- feature.lowerBound,
+			multiValued <- false
+		)
+}
+
+--6
+rule Attribute2SimpleTypePropertyMultiValued extends Attribute2SimpleTypeProperty
+{	
+	from 
+		feature : SOOML!Attribute (feature.upperBound > 1 or feature.upperBound = -1)
+	to
+		property : SOOPL!SimpleTypeProperty
+		(
+			multiValued <- true
+		)
+}
+
+rule Attribute2SimpleTypeProperty extends StructuralFeature2Property
+{	
+	from 
+		feature : SOOML!Attribute 
+	to
+		property : SOOPL!SimpleTypeProperty
+		(
+			dataType <- feature.dataType
+		)
+}
+
+--7
+rule Reference2ComplexTypePropertyMultiValued extends Reference2ComplexTypeProperty
+{
+	from
+		feature : SOOML!Reference (feature.upperBound > 1 or feature.upperBound = -1)
+	to
+		property : SOOPL!ComplexTypeProperty
+		(
+			multiValued <- true
+		)
+}
+
+rule Reference2ComplexTypeProperty extends StructuralFeature2Property
+{
+	from
+		feature : SOOML!Reference
+	to
+		property : SOOPL!ComplexTypeProperty
+		(
+			type <- feature.type,
+			opposite <- feature.opposite
+		)
+}
+
+--8
+rule Operation2Method
+{
+	from
+		operation : SOOML!Operation (operation.oclIsTypeOf(SOOML!Operation))
+	to	
+		methods : SOOPL!Method
+		(
+			name <- operation.name,
+			--parameters <- operation.parameter
+			parameters <- operation.parameter -> collect(param | thisModule.Parameter2Parameter(param))
+		)
+}
+
+--9
+lazy rule Parameter2ComplexTypeParameter extends Parameter2Parameter
+{
+	from
+		i : SOOML!Parameter (i.dataType = #Complex)
+	to
+		o : SOOPL!ComplexTypeParameter
+		(
+			--name <- i.name,
+			classType <- i.classType
+		)
+}
+
+lazy rule Parameter2SimpleTypeParameter extends Parameter2Parameter
+{
+	from
+		i : SOOML!Parameter (i.dataType <> #Complex)
+	to
+		o : SOOPL!SimpleTypeParameter
+		(
+			--name <- i.name,
+			dataType <- i.dataType
+		)	
+}
+
+lazy abstract rule Parameter2Parameter
+{
+	from
+		i : SOOML!Parameter
+	to
+		o : SOOPL!Parameter
+		(
+			name <- i.name	
+		)
+}
+
+-- 10
+rule StateMachine2StateClass
+{
+	from
+		sm : SOOML!StateMachine
+	to
+		stateClass : SOOPL!StateClass
+		(
+			name <- sm.class.name+'State',
+			isAbstract <- true,
+			statefulClass <- sm.class,
+			methods <- sm.class.operations
+		)
+}
+
+-- 11
+rule State2StateImplementationClass
+{
+	from
+		state : SOOML!State
+	to
+		stateImplementationClass : SOOPL!StateImplementationClass
+		( 
+			stateClass <- state.getStateMachineOfState(),
+			-- superClass <- stateImplementationClass.stateClass,
+			name <- thisModule.firstUpper(state.name+'StateStateImpl'),
+			methods <- transitionMethod,
+			entryMethod <- if not state.entryOperation.oclIsUndefined() then 
+								state.entryOperation.calledOperation 
+							else state.entryOperation endif 
+		),
+		transitionMethod : SOOPL!TransitionMethod
+		(
+			-- name <- state.transitions.debug('transitions') -> collect(t | t.event).debug('event') -> collect(e | e.operation).debug('operation') -> collect(o | o.name).debug('name').first().debug('\n')--,
+			name <- state.transitions -> collect(t | t.event) -> collect(e | e.operation) -> collect(o | o.name).first(),
+			transitions <- state.transitions,
+			parameters <- state.transitions -> collect(t | t.event) -> collect(e | e.operation) -> collect(o | o.parameter).flatten() -> collect(p | thisModule.Parameter2Parameter(p))
+		)
+}
+
+-- 12
+rule Transition2Transition
+{
+	from
+		trans : SOOML!Transition
+	to
+		transition : SOOPL!Transition
+		(
+			actions <- trans.actions,
+			guard <- trans.guard,
+			targetState <- trans.target
+		)
+}
+
+-- 13
+rule Event
+{
+	from
+		i : SOOML!Event
+
+}
+
+-- 14
+lazy abstract rule Guard2Guard
+{
+	from
+		i : SOOML!Guard
+	to
+		o : SOOPL!Guard
+		(
+			
+		)
+}
+
+-- 15
+lazy abstract rule IsInStateCondition2IsInStateCondition
+{
+	from
+		i : SOOML!IsInStateCondition
+	to
+		o : SOOPL!IsInStateCondition
+		(
+			inState <- i.inState	
+		)
+}
+
+-- 16
+rule ReferenceIsInStateCondition2PropertyIsInState
+{
+	from
+		i : SOOML!ReferenceIsInStateCondition
+	to
+		o : SOOPL!PropertyIsInState
+		(
+			inState <- i.inState,
+			property <- i.reference
+		)
+}
+
+-- 17
+rule ParameterIsInStateCondition2ParameterIsInState
+{
+	from
+		i : SOOML!ParameterIsInStateCondition
+	to
+		o : SOOPL!ParameterIsInState
+		(
+			inState <- i.inState,
+			parameter <- thisModule.Parameter2Parameter(i.parameter)
+		)
+}
+
+-- 18
+abstract rule Action2Action
+{
+	from
+		i : SOOML!Action
+	to
+		o : SOOPL!Action  -- abstract
+		(
+			
+		)
+}
+
+-- 19
+rule ReferenceAssignmentAction2AssignProperty extends Action2Action
+{
+	from
+		i : SOOML!ReferenceAssignmentAction
+	to
+		o : SOOPL!AssignProperty
+		(
+			parameter <- thisModule.Parameter2Parameter(i.parameter),
+			property <- i.reference
+		)
+}
+
+-- 20
+abstract rule CallOperationAction2CallMethodAction extends Action2Action
+{
+	from
+		i : SOOML!CallOperationAction
+	to
+		o : SOOPL!CallMethodAction -- abstract
+		(
+			calledMethod <- i.calledOperation,
+			parameterBinding <- i.parameter
+		)
+}
+
+-- 21
+rule CallParameterOperationAction2CallMethodOfParameter extends CallOperationAction2CallMethodAction
+{
+	from
+		i : SOOML!CallParameterOperationAction
+	to
+		o : SOOPL!CallMethodOfProperty
+		(
+			--calledMethod <- i.calledOperation,
+			parameter <- i.callObjectViaParameter--,
+			--parameterBinding <- i.parameter
+		)
+}
+
+-- 22
+rule CallReferenceOperationAction2CallMethodOfProperty extends CallOperationAction2CallMethodAction
+{
+	from
+		i : SOOML!CallReferenceOperationAction
+	to
+		o : SOOPL!CallMethodOfProperty
+		(
+			--calledMethod <- i.calledOperation,
+			property <- i.callObjectViaReference--,
+			--parameterBinding <- i.parameter
+		)
+}
+
+-- 23
+rule ParameterBinding2ParameterBinding
+{
+	from
+		i : SOOML!ParameterBinding
+	to
+		o : SOOPL!ParameterBinding
+		(
+			parameter <- thisModule.Parameter2Parameter(i.parameterBinding),
+			structuralFeatureBinding <- i.structuralFeatureBinding
+		)
+}

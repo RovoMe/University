@@ -1,0 +1,8 @@
+<soapenv:Envelope xsi:schemaLocation="http://schemas.xmlsoap.org/soap/envelope/ http://schemas.xmlsoap.org/soap/envelope/" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ord="http://infosys.tuwien.ac.at/aic10/ass2/OrderProcessSchema">
+  <soapenv:Body>
+    <ord:parameters_callback>
+      <ord:shipping_id><!-- insert your shipping_id here --></ord:shipping_id>
+    </ord:parameters_callback>
+  </soapenv:Body>
+</soapenv:Envelope>
+      

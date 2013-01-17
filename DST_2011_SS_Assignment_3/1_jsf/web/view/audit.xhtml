@@ -1,0 +1,69 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core">
+	<h:head>
+		<meta http-equiv="Content-Type" content="text/html; charset=UFT-8" />
+		<title>#{m.app_title} - #{m.audit_pageName}</title>
+		<style type="text/css">
+			.col { width: 180px; display: block; }
+			.error { color: red; font-size: 14px; }
+			.audit { font-size: 12px; }
+		</style>
+	</h:head>
+    <h:body>
+        <h1>#{m.audit_title}</h1>
+        <f:view>
+        	<h:form id="tempJobForm">
+        		<h:outputLink value="#{m.home_page}" rendered="#{gms.isLoaded}">#{m.home_pageName}</h:outputLink>
+        		<h:dataTable border="1" value="#{audit.auditLog}" var="a">
+        			<h:column>
+	        			<f:facet name="header" styleClass="audit">#{m.audit_time}</f:facet>
+	        			<div class="audit">#{a.time}</div>
+	        		</h:column>
+	        		<h:column>
+	        			<f:facet name="header" styleClass="audit">#{m.audit_id}</f:facet>
+	        			<div class="audit">#{a.id}</div>
+	        		</h:column>
+	        		<h:column>
+	        			<f:facet name="header" styleClass="audit">#{m.audit_class}</f:facet>
+	        			<div class="audit">#{a.myClass}</div>
+	        		</h:column>
+	        		<h:column>
+	        			<f:facet name="header" styleClass="audit">#{m.audit_method}</f:facet>
+	        			<div class="audit">#{a.method}</div>
+	        		</h:column>
+	        		<h:column>
+	        			<f:facet name="header" styleClass="audit">#{m.audit_value}</f:facet>
+	        			<div class="audit">#{a.value}</div>
+	        		</h:column>
+	        		<h:column>
+	        			<f:facet name="header" styleClass="audit">#{m.audit_param}</f:facet>
+	        			<h:dataTable border="0" value="#{a.parameters}" var="p">
+	        				<h:column>
+	        					<f:facet name="header"><div class="audit">#{m.audit_paramIdx}</div></f:facet>
+	        					<div class="audit">#{p.index}</div>
+	        				</h:column>
+	        				<h:column>
+	        					<f:facet name="header"><div class="audit">#{m.audit_paramClassName}</div></f:facet>
+	        					<div class="audit">#{p.className}</div>
+	        				</h:column>
+	        				<h:column>
+	        					<f:facet name="header"><div class="audit">#{m.audit_paramValue}</div></f:facet>
+	        					<div class="audit">#{p.value}</div>
+	        				</h:column>
+	        			</h:dataTable>
+	        		</h:column>
+	        		<h:column>
+	        			<f:facet name="header" styleClass="audit">#{m.audit_failure}</f:facet>
+	        			<div class="audit">#{a.failure}</div>
+	        		</h:column>
+	        		
+        		</h:dataTable>
+        		<p/>
+        		<h:outputLink value="#{m.home_page}" rendered="#{gms.isLoaded}">#{m.home_pageName}</h:outputLink>
+        	</h:form>
+        </f:view>
+    </h:body>
+</html>

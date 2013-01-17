@@ -1,0 +1,76 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<wsdl:definitions name="RegistrationService" targetNamespace="http://infosys.tuwien.ac.at/aic10/registration" xmlns:ns1="http://schemas.xmlsoap.org/wsdl/soap/http" xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/" xmlns:tns="http://infosys.tuwien.ac.at/aic10/registration" xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/" xmlns:xsd="http://www.w3.org/2001/XMLSchema">
+  <wsdl:types>
+<xs:schema attributeFormDefault="unqualified" elementFormDefault="unqualified" targetNamespace="http://infosys.tuwien.ac.at/aic10/registration" xmlns="http://infosys.tuwien.ac.at/aic10/registration" xmlns:xs="http://www.w3.org/2001/XMLSchema">
+<xs:complexType name="registerStudentResult">
+<xs:sequence>
+<xs:element minOccurs="0" name="message" type="xs:string"/>
+<xs:element name="success" type="xs:boolean"/>
+</xs:sequence>
+</xs:complexType>
+<xs:element name="RegistrationFault" type="RegistrationFault"/>
+<xs:complexType name="RegistrationFault">
+<xs:sequence>
+<xs:element name="details" nillable="true" type="xs:string"/>
+</xs:sequence>
+</xs:complexType>
+<xs:element name="register_student" type="register_student"/>
+<xs:complexType name="register_student">
+<xs:sequence>
+<xs:element minOccurs="0" name="studentNumber" type="xs:string"/>
+<xs:element minOccurs="0" name="lastName" type="xs:string"/>
+<xs:element minOccurs="0" name="programNumber" type="xs:string"/>
+<xs:element minOccurs="0" name="password" type="xs:string"/>
+</xs:sequence>
+</xs:complexType>
+<xs:element name="register_studentResponse" type="register_studentResponse"/>
+<xs:complexType name="register_studentResponse">
+<xs:sequence>
+<xs:element minOccurs="0" name="success" type="registerStudentResult"/>
+</xs:sequence>
+</xs:complexType>
+</xs:schema>
+  </wsdl:types>
+  <wsdl:message name="register_studentResponse">
+    <wsdl:part element="tns:register_studentResponse" name="parameters">
+    </wsdl:part>
+  </wsdl:message>
+  <wsdl:message name="RegistrationException">
+    <wsdl:part element="tns:RegistrationFault" name="RegistrationException">
+    </wsdl:part>
+  </wsdl:message>
+  <wsdl:message name="register_student">
+    <wsdl:part element="tns:register_student" name="parameters">
+    </wsdl:part>
+  </wsdl:message>
+  <wsdl:portType name="RegistrationService">
+    <wsdl:operation name="register_student">
+      <wsdl:input message="tns:register_student" name="register_student">
+    </wsdl:input>
+      <wsdl:output message="tns:register_studentResponse" name="register_studentResponse">
+    </wsdl:output>
+      <wsdl:fault message="tns:RegistrationException" name="RegistrationException">
+    </wsdl:fault>
+    </wsdl:operation>
+  </wsdl:portType>
+  <wsdl:binding name="RegistrationServiceSoapBinding" type="tns:RegistrationService">
+    <soap:binding style="document" transport="http://schemas.xmlsoap.org/soap/http"/>
+    <wsdl:operation name="register_student">
+      <soap:operation soapAction="" style="document"/>
+      <wsdl:input name="register_student">
+        <soap:body use="literal"/>
+      </wsdl:input>
+      <wsdl:output name="register_studentResponse">
+        <soap:body use="literal"/>
+      </wsdl:output>
+      <wsdl:fault name="RegistrationException">
+        <soap:fault name="RegistrationException" use="literal"/>
+      </wsdl:fault>
+    </wsdl:operation>
+  </wsdl:binding>
+  <wsdl:service name="RegistrationService">
+    <wsdl:port binding="tns:RegistrationServiceSoapBinding" name="RegistrationServicePT">
+      <soap:address location="http://stockholm.vitalab.tuwien.ac.at:8000/registration"/>
+    </wsdl:port>
+  </wsdl:service>
+</wsdl:definitions>

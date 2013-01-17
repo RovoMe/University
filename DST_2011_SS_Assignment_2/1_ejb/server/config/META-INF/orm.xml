@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<entity-mappings xmlns="http://java.sun.com/xml/ns/persistence/orm"
+		xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+		xsi:schemaLocation="http://java.sun.com/xml/ns/persistence/orm http://java.sun.com/xml/ns/persistence/orm_2_0.xsd"
+		version="2.0">
+			
+	<entity class="dst2.ejb.entity.Computer" access="PROPERTY">
+   		
+   		<table>
+   			<unique-constraint>
+   				<column-name>name</column-name>
+   			</unique-constraint>
+   		</table>
+   		
+   		<attributes>  		
+   			<id name="id">
+   				<generated-value strategy="IDENTITY"/>
+   			</id>
+   			
+   			<basic name="name" />
+			<basic name="CPUs" />
+   			<basic name="location" />
+   			<basic name="creationDate">
+   				<temporal>TIMESTAMP</temporal>
+   			</basic>
+   			<basic name="lastUpdate">
+   				<temporal>TIMESTAMP</temporal>
+   			</basic>
+   			
+   			<many-to-one name="cluster" target-entity="dst2.ejb.entity.Cluster">
+   				<join-column name="CLUSTER_ID" referenced-column-name="ID" insertable="false" updatable="false"/>
+   				<cascade>
+   					<cascade-all/>
+   				</cascade>
+   			</many-to-one>
+
+   			<many-to-many name="execution" target-entity="dst2.ejb.entity.Execution" mapped-by="computers" fetch="LAZY">
+   				<cascade>
+   					<cascade-all/>
+   				</cascade>
+   			</many-to-many>	
+   		</attributes>
+   		
+   	</entity>
+</entity-mappings>

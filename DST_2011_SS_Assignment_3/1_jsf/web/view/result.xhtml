@@ -1,0 +1,39 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core">
+	<h:head>
+		<meta http-equiv="Content-Type" content="text/html; charset=UFT-8" />
+		<title>#{m.app_title} - #{m.result_pageName}</title>
+		<style type="text/css">
+			.col { width: 150px; display: block; }
+			.error { color: red; font-size: 14px; }
+		</style>
+	</h:head>
+    <h:body>
+    	<f:view>
+    	    <h1>#{m.result_title}</h1>
+			<h:dataTable border="1" value="#{search.resultList}" var="s">
+				<h:column>
+	        		<f:facet name="header">#{m.result_id}</f:facet>#{s.id}
+	        	</h:column>
+	        	<h:column>
+	        		<f:facet name="header">#{m.result_startTime}</f:facet>#{s.startTime}
+	        	</h:column>
+	        	<h:column>
+	        		<f:facet name="header">#{m.result_endTime}</f:facet>#{s.endTime}
+	        	</h:column>
+	        	<h:column>
+	        		<f:facet name="header">#{m.result_user}</f:facet>#{s.userName}
+	        	</h:column>
+			</h:dataTable>
+			<p/>
+    		<h:outputLink value="#{m.home_page}">#{m.home_pageName}</h:outputLink>
+    		<h:outputLabel value="#{m.app_linkSeperator}" />
+    		<h:outputLink value="#{m.grid_page}">#{m.grid_pageName}</h:outputLink>
+    		<h:outputLabel value="#{m.app_linkSeperator}" />
+    		<h:outputLink value="#{m.search_page}">#{m.search_pageName}</h:outputLink>
+    	</f:view>
+    </h:body>
+</html>

@@ -1,0 +1,74 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core">
+	<h:head>
+		<meta http-equiv="Content-Type" content="text/html; charset=UFT-8" />
+		<title>#{m.app_title} - #{m.register_pageName}</title>
+		<style type="text/css">
+			.col { width: 150px; display: block; }
+			.error { color: red; font-size: 14px; }
+		</style>
+	</h:head>
+    <h:body>
+    	<f:view>
+    		<h1>#{m.register_title}</h1>
+    		<h:form id="registerForm">
+	    		<h:panelGrid border="1" columns="1" style="font-size: 16px;">
+		    		<f:facet name="header">
+		    			<h:outputText value="#{m.register_text}" styleClass="title-panel-text"/>
+		    		</f:facet>
+		    		
+			    	<h:panelGrid columns="3">
+				    	<h:outputText styleClass="col" value="#{m.register_username}"/>
+				   		<h:inputText id="username" required="true" value="#{register.userName}" validator="#{register.validateUserName}" />
+				   		<h:message for="username" styleClass="error"/>
+				   		<h:outputText styleClass="col" value="#{m.register_password1}"/>
+				   		<h:inputSecret id="password1" value="#{register.password1}" required="true" />
+				   		<h:message for="password1" styleClass="error"/>
+				    	<h:outputText styleClass="col" value="#{m.register_password2}"/>
+				    	<h:inputSecret id="password2" value="#{register.password2}" required="true" />
+				    	<h:message for="password2" styleClass="error"/>
+			    	</h:panelGrid>
+			    	<h:panelGrid columns="3">
+				    	<h:outputText styleClass="col" value="#{m.register_firstName}"/>
+				    	<h:inputText id="firstName" required="true" value="#{register.firstName}"/>
+				    	<h:message for="firstName" styleClass="error"/>
+				    	<h:outputText styleClass="col" value="#{m.register_lastName}"/>
+				    	<h:inputText id="lastName" required="true" value="#{register.lastName}"/>
+				    	<h:message for="lastName" styleClass="error"/>
+			    	</h:panelGrid>
+			    	<h:panelGrid columns="3">
+				    	<h:outputText styleClass="col" value="#{m.register_streetName}"/>
+				    	<h:inputText id="streetName" required="true" value="#{register.streetName}"/>
+				    	<h:message for="streetName" styleClass="error"/>
+				  		<h:outputText styleClass="col" value="#{m.register_city}"/>
+				    	<h:inputText id="city" required="true" value="#{register.city}"/>
+				    	<h:message for="city" styleClass="error"/>
+				    	<h:outputText styleClass="col" value="#{m.register_zip}"/>
+				    	<h:inputText id="zip" required="true" value="#{register.zipCode}"/>
+				    	<h:message for="zip" styleClass="error"/>
+			    	</h:panelGrid>
+			    	<h:panelGrid columns="3">
+				    	<h:outputText styleClass="col" value="#{m.register_accountNo}"/>
+				    	<h:inputText id="accountNo" required="true" value="#{register.accountNo}"/>
+				    	<h:message for="accountNo" styleClass="error"/>
+				    	<h:outputText styleClass="col" value="#{m.register_bankCode}"/>
+				    	<h:inputText id="bankCode" required="true" value="#{register.bankCode}"/>
+				    	<h:message for="bankCode" styleClass="error"/>
+			    	</h:panelGrid>
+			    	
+		    		<f:facet name="footer">
+		    			<h:panelGroup>
+			          		<h:commandButton id="loadButton" value="#{m.register_submit}" type="submit" action="#{register.register}" />
+			          		<h:commandButton id="resettButton" value="#{m.register_reset}" type="reset" action="#{register.reset}"/>
+		          		</h:panelGroup>
+	          		</f:facet>
+	        	</h:panelGrid>
+	        	<f:event type="postValidate" listener="#{register.validate}"/>
+        	</h:form>
+        	<h:outputLink value="#{m.home_page}">#{m.home_pageName}</h:outputLink>
+    	</f:view>
+    </h:body>
+</html>

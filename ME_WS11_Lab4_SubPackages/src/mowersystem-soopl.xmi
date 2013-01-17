@@ -1,0 +1,101 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
+<soopl:Package xmi:version="2.0" xmlns:xmi="http://www.omg.org/XMI" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:soopl="http://www.big.tuwien.ac.at/me/ws11/soopl" name="MowerSystem">
+  <packages name="MowerSubSystem">
+    <classes xsi:type="soopl:StatefulClass" name="ChargingUnit" initialState="//@packages.0/@classes.4" stateClass="//@packages.0/@classes.2">
+      <properties xsi:type="soopl:ComplexTypeProperty" name="mowers" upperBound="2" multiValued="true" type="//@packages.0/@classes.1" opposite="//@packages.0/@classes.1/@properties.1"/>
+      <properties xsi:type="soopl:ComplexTypeProperty" name="currentMower" type="//@packages.0/@classes.1"/>
+    </classes>
+    <classes xsi:type="soopl:StatefulClass" name="Mower" initialState="//@packages.0/@classes.6" stateClass="//@packages.0/@classes.3">
+      <properties xsi:type="soopl:SimpleTypeProperty" name="name" lowerBound="1"/>
+      <properties xsi:type="soopl:ComplexTypeProperty" name="chargingUnit" lowerBound="1" type="//@packages.0/@classes.0" opposite="//@packages.0/@classes.0/@properties.0"/>
+    </classes>
+    <classes xsi:type="soopl:StateClass" name="ChargingUnitState" isAbstract="true" statefulClass="//@packages.0/@classes.0">
+      <methods name="charge">
+        <parameters xsi:type="soopl:ComplexTypeParameter" name="mower" classType="//@packages.0/@classes.1"/>
+      </methods>
+      <methods name="finished"/>
+    </classes>
+    <classes xsi:type="soopl:StateClass" name="MowerState" isAbstract="true" statefulClass="//@packages.0/@classes.1">
+      <methods name="mow"/>
+      <methods name="driveToChargingUnit"/>
+      <methods name="charged"/>
+      <methods name="retryCharging"/>
+    </classes>
+    <classes xsi:type="soopl:StateImplementationClass" name="ReadyStateStateImpl" stateClass="//@packages.0/@classes.2">
+      <methods xsi:type="soopl:TransitionMethod" name="charge">
+        <parameters xsi:type="soopl:ComplexTypeParameter" name="mower" classType="//@packages.0/@classes.1"/>
+        <transitions targetState="//@packages.0/@classes.5">
+          <actions xsi:type="soopl:AssignProperty" parameter="//@packages.0/@classes.4/@methods.0/@parameters.0" property="//@packages.0/@classes.0/@properties.1"/>
+        </transitions>
+      </methods>
+    </classes>
+    <classes xsi:type="soopl:StateImplementationClass" name="BusyStateStateImpl" entryMethod="//@packages.0/@classes.2/@methods.1" stateClass="//@packages.0/@classes.2">
+      <methods xsi:type="soopl:TransitionMethod" name="finished">
+        <transitions targetState="//@packages.0/@classes.4">
+          <actions xsi:type="soopl:CallMethodOfProperty" calledMethod="//@packages.0/@classes.3/@methods.2" property="//@packages.0/@classes.0/@properties.1"/>
+        </transitions>
+      </methods>
+    </classes>
+    <classes xsi:type="soopl:StateImplementationClass" name="ChargedStateStateImpl" entryMethod="//@packages.0/@classes.3/@methods.0" stateClass="//@packages.0/@classes.3">
+      <methods xsi:type="soopl:TransitionMethod" name="mow">
+        <transitions targetState="//@packages.0/@classes.7"/>
+      </methods>
+    </classes>
+    <classes xsi:type="soopl:StateImplementationClass" name="LowBatteryStateStateImpl" entryMethod="//@packages.0/@classes.3/@methods.1" stateClass="//@packages.0/@classes.3">
+      <methods xsi:type="soopl:TransitionMethod" name="driveToChargingUnit">
+        <transitions targetState="//@packages.0/@classes.9">
+          <guard xsi:type="soopl:PropertyIsInState" inState="//@packages.0/@classes.5" property="//@packages.0/@classes.1/@properties.1"/>
+        </transitions>
+        <transitions targetState="//@packages.0/@classes.8">
+          <actions xsi:type="soopl:CallMethodOfProperty" calledMethod="//@packages.0/@classes.2/@methods.0" property="//@packages.0/@classes.1/@properties.1">
+            <parameterBinding parameter="//@packages.0/@classes.4/@methods.0/@parameters.0"/>
+          </actions>
+          <guard xsi:type="soopl:PropertyIsInState" inState="//@packages.0/@classes.4" property="//@packages.0/@classes.1/@properties.1"/>
+        </transitions>
+      </methods>
+    </classes>
+    <classes xsi:type="soopl:StateImplementationClass" name="ChargingStateStateImpl" stateClass="//@packages.0/@classes.3">
+      <methods xsi:type="soopl:TransitionMethod" name="charged">
+        <transitions targetState="//@packages.0/@classes.6"/>
+      </methods>
+    </classes>
+    <classes xsi:type="soopl:StateImplementationClass" name="WaitingStateStateImpl" entryMethod="//@packages.0/@classes.3/@methods.3" stateClass="//@packages.0/@classes.3">
+      <methods xsi:type="soopl:TransitionMethod" name="retryCharging">
+        <transitions targetState="//@packages.0/@classes.7"/>
+      </methods>
+    </classes>
+  </packages>
+  <packages name="SubPackage">
+    <classes xsi:type="soopl:StatefulClass" name="Test" initialState="//@packages.1/@classes.2" stateClass="//@packages.1/@classes.1">
+      <properties xsi:type="soopl:ComplexTypeProperty" name="chargingUnit" type="//@packages.0/@classes.0"/>
+      <properties xsi:type="soopl:ComplexTypeProperty" name="mower" upperBound="2" multiValued="true" type="//@packages.0/@classes.1"/>
+    </classes>
+    <classes xsi:type="soopl:StateClass" name="TestState" isAbstract="true" statefulClass="//@packages.1/@classes.0">
+      <methods name="test">
+        <parameters xsi:type="soopl:ComplexTypeParameter" name="chargingUnit" classType="//@packages.0/@classes.0"/>
+      </methods>
+      <methods name="test">
+        <parameters xsi:type="soopl:ComplexTypeParameter" name="mower" classType="//@packages.0/@classes.1"/>
+      </methods>
+    </classes>
+    <classes xsi:type="soopl:StateImplementationClass" name="BeforeTestStateStateImpl" stateClass="//@packages.1/@classes.1">
+      <methods xsi:type="soopl:TransitionMethod" name="test">
+        <parameters xsi:type="soopl:ComplexTypeParameter" name="chargingUnit" classType="//@packages.0/@classes.0"/>
+        <transitions targetState="//@packages.1/@classes.3"/>
+      </methods>
+    </classes>
+    <classes xsi:type="soopl:StateImplementationClass" name="AfterTestStateStateImpl" stateClass="//@packages.1/@classes.1"/>
+    <packages name="SubSubPackage">
+      <classes xsi:type="soopl:StatefulClass" name="SubTest" initialState="//@packages.1/@packages.0/@classes.2" stateClass="//@packages.1/@packages.0/@classes.1"/>
+      <classes xsi:type="soopl:StateClass" name="SubTestState" isAbstract="true" statefulClass="//@packages.1/@packages.0/@classes.0">
+        <methods name="test"/>
+      </classes>
+      <classes xsi:type="soopl:StateImplementationClass" name="BeforeSubTestStateStateImpl" stateClass="//@packages.1/@packages.0/@classes.1">
+        <methods xsi:type="soopl:TransitionMethod" name="test">
+          <transitions targetState="//@packages.1/@packages.0/@classes.3"/>
+        </methods>
+      </classes>
+      <classes xsi:type="soopl:StateImplementationClass" name="AfterSubTestStateStateImpl" stateClass="//@packages.1/@packages.0/@classes.1"/>
+    </packages>
+  </packages>
+</soopl:Package>

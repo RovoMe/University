@@ -1,0 +1,15 @@
+import soopl;
+
+Boolean IsSimulation() : ((Boolean)GLOBALVAR IsSimulation);
+
+getter(Property this) :
+	"get"+name.toFirstUpper();
+	
+setter(Property this) :
+	"set"+name.toFirstUpper();
+
+stateVar() : "currentState";
+
+statefulClass() : "statefulClass";
+
+entryOperation() : "performEntryOperation()";

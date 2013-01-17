@@ -1,0 +1,271 @@
+«IMPORT soopl»
+
+«EXTENSION template::GeneratorExtensions»
+
+*************************************************
+ROOT
+*************************************************
+
+«DEFINE main FOR Package»
+	«EXPAND class(this) FOREACH classes»
+	«EXPAND class(this) FOREACH packages»
+«ENDDEFINE»
+
+*************************************************
+PACKAGES
+Includes a frame for main structure of classes
+*************************************************
+
+//For nested packages -> needs fixing -> should call the upper template (main) instead, prob needs a recursive function
+//alternative solution -> see TUWEL forum -> delete template and include content for main template
+«DEFINE class(Package package) FOR Package-»
+	«EXPAND class(this) FOREACH packages-»
+
+	«FOREACH this.classes AS c ITERATOR it-»
+		«FILE package.name+"/"+c.name + ".java"-»
+			package «this.parentPackage.name»;
+			
+			«IF c.metaType == StatefulClass && IsSimulation() == true»import java.util.Observable;«ENDIF»
+
+			public «IF c.isAbstract==true»abstract«ENDIF» class «c.name-»			
+			«IF c.superClass != null»extends «c.superClass.name-»
+			«ELSEIF c.metaType == StateImplementationClass»extends «((StateImplementationClass)c).stateClass.name-»
+			«ENDIF-»			
+			«IF c.metaType == StatefulClass && IsSimulation() == true-»extends Observable«ENDIF» {
+				«EXPAND class(this) FOR c»			
+			}
+		«ENDFILE»
+	«ENDFOREACH»
+«ENDDEFINE»
+
+*************************************************
+INNER CONTENT OF CLASSES
+*************************************************
+
+«DEFINE class(Package package) FOR Class»
+«ENDDEFINE»
+
+«DEFINE class(Package package) FOR StatefulClass-»
+	/**
+	 * Properties
+	 */
+	 
+	«FOREACH this.properties AS p ITERATOR it-»
+	private «EXPAND property(this) FOR p-»«IF p.upperBound > 1-»[]«ENDIF-» 
+		«p.name-»«IF p.upperBound > 1-» = new «EXPAND property(this) FOR p-»[«p.upperBound-»]«ENDIF-»;
+		
+	«ENDFOREACH-» 
+	
+	private «this.stateClass.name» «stateVar()-»;
+		
+	/**
+	 * Operations
+	 */
+	«EXPAND method(this) FOREACH this.stateClass.methods»
+	
+	/**
+	 * Getter & Setter
+	 */
+	 «EXPAND setGet FOREACH this.properties»
+	 
+	 /**
+	 * State Machine Operations
+	 */
+	 public void set«stateVar().toFirstUpper()»(«this.stateClass.name-» «stateVar()-») {
+		this.«stateVar()» = «stateVar()-»;
+		«IF IsSimulation() == true-»
+			setChanged();
+			notifyObservers();
+		«ENDIF-»
+	}
+
+	public «this.stateClass.name» get«stateVar().toFirstUpper()-»() {
+		return «stateVar()-»;
+	}
+
+	public void perform() {
+		this.«stateVar()-».«entryOperation()»;
+	}
+
+	public void performInit() {
+		set«stateVar().toFirstUpper()-»(new «this.initialState.name-»(this));
+	}
+«ENDDEFINE»
+
+«DEFINE class(Package package) FOR StateClass»
+	private «this.statefulClass.name-» «statefulClass()-»;
+	«EXPAND constructor(this) FOR this-»
+	
+	public «this.statefulClass.name-» get«statefulClass().toFirstUpper()-»() {
+		return «statefulClass()»;
+	}
+	
+	public abstract void «entryOperation()-»;
+	
+	«EXPAND stateMethod(this) FOREACH this.methods»
+«ENDDEFINE»
+
+«DEFINE class(Package package) FOR StateImplementationClass-»
+	public «this.name-»(«this.stateClass.statefulClass.name-» «statefulClass()-») {
+		super(«statefulClass()-»);
+	}
+	«FOREACH this.methods AS m ITERATOR it»
+		@Override
+		«EXPAND stateImplMethod(this) FOR m»
+	«ENDFOREACH»
+	
+	@Override
+	public void «entryOperation()»{
+	«IF !this.entryMethod.isEmpty»«FOREACH this.entryMethod AS em ITERATOR it-»
+		«em.name»(«FOREACH em.parameters AS p SEPARATOR ", "»«p.name»«ENDFOREACH»);
+	«ENDFOREACH-»
+	«ENDIF-»}
+«ENDDEFINE»
+
+*************************************************
+DATATYPES OF PROPERTIES
+*************************************************
+
+«DEFINE property(Class class) FOR Property»
+«ENDDEFINE»
+
+«DEFINE property(Class class) FOR SimpleTypeProperty»
+	«this.dataType»
+«ENDDEFINE»
+
+«DEFINE property(Class class) FOR ComplexTypeProperty»
+	«this.type.name»
+«ENDDEFINE»
+
+*************************************************
+OPERATIONS
+*************************************************
+
+«DEFINE method(Class class) FOR Method»
+	public void «this.name»(«FOREACH this.parameters AS p ITERATOR it SEPARATOR ", "-»
+	«EXPAND parameter(this) FOR p-» «p.name-»«ENDFOREACH-») 
+	{
+		«stateVar()-».«this.name-»(
+		«FOREACH this.parameters AS p ITERATOR it SEPARATOR ", "-»«p.name-»«ENDFOREACH-»);
+	}
+«ENDDEFINE»
+
+«DEFINE stateImplMethod(StateImplementationClass class) FOR Method»
+	public void «this.name-»(«FOREACH this.parameters AS p ITERATOR it SEPARATOR ", "-»
+	«EXPAND parameter(this) FOR p-» «p.name-»«ENDFOREACH-») {
+		«PROTECT CSTART '/*' CEND '*/' ID name»
+		try {
+			Thread.sleep(1000l);
+		} catch (InterruptedException e) {
+		}
+		«ENDPROTECT»
+		
+		«EXPAND transitions(class) FOR this»
+	}
+«ENDDEFINE»
+
+«DEFINE stateMethod(Class class) FOR Method»
+	public void «this.name-»(«FOREACH this.parameters AS p ITERATOR it SEPARATOR ", "-»
+	«EXPAND parameter(this) FOR p-» «p.name-»«ENDFOREACH-») {
+	}
+«ENDDEFINE»
+
+*************************************************
+Implementation of State Diagram
+*************************************************
+«DEFINE transitions(StateImplementationClass class) FOR Method»
+«ENDDEFINE»
+
+«DEFINE transitions(StateImplementationClass class) FOR TransitionMethod»
+	«FOREACH this.transitions AS t ITERATOR it-»
+		«IF t.guard != null-»
+			«EXPAND guard(t) FOR t.guard-»
+		«ENDIF-»
+		
+		«FOREACH t.actions AS a ITERATOR it-»
+			/**Action**/
+			«EXPAND action(a) FOR a-»
+		«ENDFOREACH-»
+		
+		get«statefulClass().toFirstUpper()»().set«stateVar().toFirstUpper()-»(new «t.targetState.name»(get«statefulClass().toFirstUpper()»()));
+		
+		«IF t.guard != null»
+			}
+		«ENDIF»	
+	«ENDFOREACH»
+«ENDDEFINE»
+
+«DEFINE guard(Transition transition) FOR Guard»
+«ERROR "Type is abstract"»
+«ENDDEFINE»
+
+«DEFINE guard(Transition transition) FOR PropertyIsInState»
+	if (get«statefulClass().toFirstUpper()»().get«this.property.name.toFirstUpper()-»().get«stateVar().toFirstUpper()»() instanceof «this.inState.name») {
+«ENDDEFINE»
+
+«DEFINE action(Action action) FOR Action»
+/**Template for Type Action shouldn't be reachable**/
+«ENDDEFINE»
+
+«DEFINE action(CallMethodAction action) FOR CallMethodOfProperty»
+	get«statefulClass().toFirstUpper()»().get«this.property.name.toFirstUpper()-»().«this.calledMethod.name-»(
+	«IF this.parameterBinding.size > 0-»
+		get«statefulClass().toFirstUpper()-»()
+	«ENDIF-»
+	);
+«ENDDEFINE»
+
+«DEFINE action(AssignProperty action) FOR AssignProperty»
+	get«statefulClass().toFirstUpper()»().set«this.property.name.toFirstUpper()»(«this.parameter.name»);
+«ENDDEFINE»
+
+*************************************************
+DATATYPES OF PARAMETERS
+*************************************************
+
+«DEFINE parameter(Method method) FOR Parameter»
+«ENDDEFINE»
+
+«DEFINE parameter(Method method) FOR SimpleTypeParameter»
+	«this.dataType»
+«ENDDEFINE»
+
+«DEFINE parameter(Method method) FOR ComplexTypeParameter»
+	«this.classType.name»
+«ENDDEFINE»
+
+*************************************************
+GETTER & SETTER OPERATIONS
+*************************************************
+
+«DEFINE setGet FOR Property»
+«ENDDEFINE»
+
+«DEFINE setGet FOR SimpleTypeProperty»
+	public void «setter(this)»(«this.dataType» «this.name») {
+		this.«this.name» = «this.name»;
+	}
+	
+	public «this.dataType» «getter(this)»() {
+		return «this.name»;
+	}
+«ENDDEFINE»
+
+«DEFINE setGet FOR ComplexTypeProperty»
+	public void «setter(this)»(«this.type.name»«IF this.upperBound > 1»[]«ENDIF» «this.name») {
+		this.«this.name» = «this.name»;
+	}
+	
+	public «this.type.name»«IF this.upperBound > 1»[]«ENDIF» «getter(this)»() {
+		return «this.name»;
+	}
+«ENDDEFINE»
+*************************************************
+CONSTRUCTOR METHODS
+*************************************************
+
+«DEFINE constructor(Class class) FOR StateClass»
+	public «this.name-»(«this.statefulClass.name-» «statefulClass()-») {
+		this.«statefulClass()-» = «statefulClass()-»;
+	}
+«ENDDEFINE»

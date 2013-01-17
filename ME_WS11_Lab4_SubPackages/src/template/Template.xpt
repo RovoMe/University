@@ -1,0 +1,347 @@
+«IMPORT soopl»
+
+«EXTENSION template::GeneratorExtensions»
+
+*************************************************
+ROOT
+*************************************************
+
+«DEFINE main FOR Package»
+	«EXPAND class(this) FOREACH classes»
+	«EXPAND class(this, this.name) FOREACH packages»
+	«EXPAND subPackage(this, this.name) FOREACH packages»
+«ENDDEFINE»
+
+«DEFINE subPackage(Package package, String path) FOR Package-»
+	«EXPAND class(this, path+"/"+this.name) FOREACH this.packages-»
+	«EXPAND subPackage(this.parentPackage, path + "/" + this.name) FOREACH this.packages-»
+«ENDDEFINE»
+
+*************************************************
+PACKAGES
+Includes a frame for main structure of classes
+*************************************************
+
+«DEFINE class(Package package, String path) FOR Package-»
+	«FOREACH this.classes AS c ITERATOR it-»
+		«FILE path + "/" + this.name + "/" + c.name + ".java"-»
+			package «path.replaceAll("/", ".")».«this.name»;
+			
+			«IF c.metaType == StatefulClass && IsSimulation() == true»import java.util.Observable;«ENDIF-»
+			«EXPAND import(this) FOR c-»
+			
+			public «IF c.isAbstract==true»abstract«ENDIF» class «c.name-»			
+			«IF c.superClass != null»extends «c.superClass.name-»
+			«ELSEIF c.metaType == StateImplementationClass»extends «((StateImplementationClass)c).stateClass.name-»
+			«ENDIF-»			
+			«IF c.metaType == StatefulClass && IsSimulation() == true-»extends Observable«ENDIF» {
+				«EXPAND class(this) FOR c»			
+			}
+		«ENDFILE»
+	«ENDFOREACH»
+«ENDDEFINE»
+
+*************************************************
+IMPORT STATEMENTS
+Import settings based on properties and parameters
+which are not included in the current package
+*************************************************
+
+«DEFINE import(Package package) FOR Class-»
+	«FOREACH this.properties AS p-»
+		«EXPAND importProperty(this, package) FOR p-»
+	«ENDFOREACH-»
+	«FOREACH this.methods AS m-»
+		«FOREACH m.parameters AS p-»
+			«EXPAND importParameter(this, package) FOR p-»
+		«ENDFOREACH-»
+	«ENDFOREACH-»
+«ENDDEFINE»
+
+«DEFINE importParameter(Class class, Package package) FOR Parameter-»
+«ENDDEFINE»
+
+«DEFINE importParameter(Class class, Package package) FOR SimpleTypeParameter-»
+	«REM»Need not to be taken care of as basic data types are located in java.lang and automatically imported«ENDREM»
+«ENDDEFINE»
+
+«DEFINE importParameter(Class class, Package package) FOR ComplexTypeParameter-»
+	«IF !package.classes.contains(this.classType)-»
+		import «EXPAND lookupPackageOfClass(this.classType) FOR package-».«this.classType.name-»;
+	«ENDIF-»
+«ENDDEFINE»
+
+«DEFINE importProperty(Class class, Package package) FOR Property-»
+«ENDDEFINE»
+
+«DEFINE importProperty(Class class, Package package) FOR SimpleTypeProperty-»
+	«REM»Need not to be taken care of as basic data types are located in java.lang and automatically imported«ENDREM»
+«ENDDEFINE»
+
+«DEFINE importProperty(Class class, Package package) FOR ComplexTypeProperty-»
+	«IF !package.classes.contains(this.type)-»
+		import «EXPAND lookupPackageOfClass(this.type) FOR package-».«this.type.name-»;
+	«ENDIF-»
+«ENDDEFINE»
+
+Backward recursivly lookup packages for containment of certain classes
+if no corresponding class could be found it goes one step back to the
+currents' package parent and start the search again.
+«DEFINE lookupPackageOfClass(Class class) FOR Package-»
+	«FOREACH this.packages AS p-»
+		«FOREACH p.classes AS c-»
+			«IF c.name.matches(class.name)-»
+				«EXPAND getRootPackage FOR p-»
+			«ENDIF-»
+		«ENDFOREACH-»
+		«EXPAND lookupSubPackagesOfPackage(class) FOR p-»
+	«ENDFOREACH-»
+	«EXPAND lookupPackageOfClass(class) FOR this.parentPackage-»
+«ENDDEFINE»
+
+Forward recursive lookup for packages that contain a certain class
+«DEFINE lookupSubPackagesOfPackage(Class class) FOR Package-»
+	«FOREACH this.packages AS p-»
+		«FOREACH p.classes AS c-»
+			«IF c.name.matches(class.name)-»
+				«EXPAND getRootPackage FOR p-»
+			«ENDIF-»
+		«ENDFOREACH-»
+		«EXPAND lookupSubPackagesOfPackage(class) FOR p-»
+	«ENDFOREACH-»
+«ENDDEFINE»
+
+«DEFINE getRootPackage FOR Package-»
+	«IF this.parentPackage == null-»
+		«this.name-»
+	«ELSE-»
+		«EXPAND getRootPackage FOR this.parentPackage-».«this.name-»
+	«ENDIF-»
+«ENDDEFINE»
+
+*************************************************
+INNER CONTENT OF CLASSES
+*************************************************
+
+«DEFINE class(Package package) FOR Class»
+«ENDDEFINE»
+
+«DEFINE class(Package package) FOR StatefulClass-»
+	/**
+	 * Properties
+	 */
+	«FOREACH this.properties AS p ITERATOR it-»
+	private «EXPAND property(this) FOR p-»«IF p.upperBound > 1-»[]«ENDIF-» 
+		«p.name-»«IF p.upperBound > 1-» = new «EXPAND property(this) FOR p-»[«p.upperBound-»]«ENDIF-»;
+	«ENDFOREACH-» 
+	private «this.stateClass.name» «stateVar()-»;
+		
+	/**
+	 * Operations
+	 */«EXPAND method(this) FOREACH this.stateClass.methods-»
+	
+	/**
+	 * Getter & Setter
+	 */«EXPAND setGet FOREACH this.properties-»
+	 
+	 /**
+	 * State Machine Operations
+	 */
+	 public void set«stateVar().toFirstUpper()»(«this.stateClass.name-» «stateVar()-») {
+		this.«stateVar()» = «stateVar()-»;
+		«IF IsSimulation() == true-»
+			setChanged();
+			notifyObservers();
+		«ENDIF-»
+	}
+
+	public «this.stateClass.name» get«stateVar().toFirstUpper()-»() {
+		return «stateVar()-»;
+	}
+
+	public void perform() {
+		this.«stateVar()-».«entryOperation()»;
+	}
+
+	public void performInit() {
+		set«stateVar().toFirstUpper()-»(new «this.initialState.name-»(this));
+	}
+«ENDDEFINE»
+
+«DEFINE class(Package package) FOR StateClass»
+	private «this.statefulClass.name-» «statefulClass()-»;
+	«EXPAND constructor(this) FOR this-»
+	
+	public «this.statefulClass.name-» get«statefulClass().toFirstUpper()-»() {
+		return «statefulClass()»;
+	}
+	
+	public abstract void «entryOperation()-»;
+	
+	«EXPAND stateMethod(this) FOREACH this.methods»
+«ENDDEFINE»
+
+«DEFINE class(Package package) FOR StateImplementationClass-»
+	public «this.name-»(«this.stateClass.statefulClass.name-» «statefulClass()-») {
+		super(«statefulClass()-»);
+	}
+	«FOREACH this.methods AS m ITERATOR it»
+		@Override
+		«EXPAND stateImplMethod(this) FOR m»
+	«ENDFOREACH»
+	
+	@Override
+	public void «entryOperation()»{
+	«IF !this.entryMethod.isEmpty»«FOREACH this.entryMethod AS em ITERATOR it-»
+		«em.name»(«FOREACH em.parameters AS p SEPARATOR ", "»«p.name»«ENDFOREACH»);
+	«ENDFOREACH-»
+	«ENDIF-»}
+«ENDDEFINE»
+
+*************************************************
+DATATYPES OF PROPERTIES
+*************************************************
+
+«DEFINE property(Class class) FOR Property»
+«ENDDEFINE»
+
+«DEFINE property(Class class) FOR SimpleTypeProperty»
+	«this.dataType»
+«ENDDEFINE»
+
+«DEFINE property(Class class) FOR ComplexTypeProperty»
+	«this.type.name»
+«ENDDEFINE»
+
+*************************************************
+OPERATIONS
+*************************************************
+
+«DEFINE method(Class class) FOR Method»
+	public void «this.name»(«FOREACH this.parameters AS p ITERATOR it SEPARATOR ", "-»
+	«EXPAND parameter(this) FOR p-» «p.name-»«ENDFOREACH-») 
+	{
+		«stateVar()-».«this.name-»(
+		«FOREACH this.parameters AS p ITERATOR it SEPARATOR ", "-»«p.name-»«ENDFOREACH-»);
+	}
+«ENDDEFINE»
+
+«DEFINE stateImplMethod(StateImplementationClass class) FOR Method»
+	public void «this.name-»(«FOREACH this.parameters AS p ITERATOR it SEPARATOR ", "-»
+	«EXPAND parameter(this) FOR p-» «p.name-»«ENDFOREACH-») {
+		«PROTECT CSTART '/*' CEND '*/' ID name»
+		try {
+			Thread.sleep(1000l);
+		} catch (InterruptedException e) {
+		}
+		«ENDPROTECT»
+		
+		«EXPAND transitions(class) FOR this»
+	}
+«ENDDEFINE»
+
+«DEFINE stateMethod(Class class) FOR Method»
+	public void «this.name-»(«FOREACH this.parameters AS p ITERATOR it SEPARATOR ", "-»
+	«EXPAND parameter(this) FOR p-» «p.name-»«ENDFOREACH-») {
+	}
+«ENDDEFINE»
+
+*************************************************
+Implementation of State Diagram
+*************************************************
+«DEFINE transitions(StateImplementationClass class) FOR Method»
+«ENDDEFINE»
+
+«DEFINE transitions(StateImplementationClass class) FOR TransitionMethod»
+	«FOREACH this.transitions AS t ITERATOR it-»
+		«IF t.guard != null-»
+			«EXPAND guard(t) FOR t.guard-»
+		«ENDIF-»
+		
+		«FOREACH t.actions AS a ITERATOR it-»
+			«EXPAND action(a) FOR a-»
+		«ENDFOREACH-»
+		
+		get«statefulClass().toFirstUpper()»().set«stateVar().toFirstUpper()-»(new «t.targetState.name»(get«statefulClass().toFirstUpper()»()));
+		
+		«IF t.guard != null»
+			}
+		«ENDIF»	
+	«ENDFOREACH»
+«ENDDEFINE»
+
+«DEFINE guard(Transition transition) FOR Guard»
+«ERROR "Type is abstract"»
+«ENDDEFINE»
+
+«DEFINE guard(Transition transition) FOR PropertyIsInState»
+	if (get«statefulClass().toFirstUpper()»().get«this.property.name.toFirstUpper()-»().get«stateVar().toFirstUpper()»() instanceof «this.inState.name») {
+«ENDDEFINE»
+
+«DEFINE action(Action action) FOR Action»
+/**Template for Type Action shouldn't be reachable**/
+«ENDDEFINE»
+
+«DEFINE action(CallMethodAction action) FOR CallMethodOfProperty»
+	get«statefulClass().toFirstUpper()»().get«this.property.name.toFirstUpper()-»().«this.calledMethod.name-»(
+	«IF this.parameterBinding.size > 0-»
+		get«statefulClass().toFirstUpper()-»()
+	«ENDIF-»
+	);
+«ENDDEFINE»
+
+«DEFINE action(AssignProperty action) FOR AssignProperty»
+	get«statefulClass().toFirstUpper()»().set«this.property.name.toFirstUpper()»(«this.parameter.name»);
+«ENDDEFINE»
+
+*************************************************
+DATATYPES OF PARAMETERS
+*************************************************
+
+«DEFINE parameter(Method method) FOR Parameter»
+«ENDDEFINE»
+
+«DEFINE parameter(Method method) FOR SimpleTypeParameter»
+	«this.dataType»
+«ENDDEFINE»
+
+«DEFINE parameter(Method method) FOR ComplexTypeParameter»
+	«this.classType.name»
+«ENDDEFINE»
+
+*************************************************
+GETTER & SETTER OPERATIONS
+*************************************************
+
+«DEFINE setGet FOR Property»
+«ENDDEFINE»
+
+«DEFINE setGet FOR SimpleTypeProperty»
+	public void «setter(this)»(«this.dataType» «this.name») {
+		this.«this.name» = «this.name»;
+	}
+	
+	public «this.dataType» «getter(this)»() {
+		return this.«this.name»;
+	}
+«ENDDEFINE»
+
+«DEFINE setGet FOR ComplexTypeProperty»
+	public void «setter(this)»(«this.type.name»«IF this.upperBound > 1»[]«ENDIF» «this.name») {
+		this.«this.name» = «this.name»;
+	}
+	
+	public «this.type.name»«IF this.upperBound > 1»[]«ENDIF» «getter(this)»() {
+		return this.«this.name»;
+	}
+«ENDDEFINE»
+
+*************************************************
+CONSTRUCTOR METHODS
+*************************************************
+
+«DEFINE constructor(Class class) FOR StateClass»
+	public «this.name-»(«this.statefulClass.name-» «statefulClass()-») {
+		this.«statefulClass()-» = «statefulClass()-»;
+	}
+«ENDDEFINE»

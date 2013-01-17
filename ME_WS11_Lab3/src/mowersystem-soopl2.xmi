@@ -1,0 +1,66 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
+<soopl:Package xmi:version="2.0" xmlns:xmi="http://www.omg.org/XMI" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:soopl="http://www.big.tuwien.ac.at/me/ws11/soopl" name="MowerSystem">
+  <classes xsi:type="soopl:StatefulClass" name="ChargingUnit" initialState="//@classes.4" stateClass="//@classes.2">
+    <properties xsi:type="soopl:ComplexTypeProperty" name="mowers" upperBound="2" multiValued="true" type="//@classes.1" opposite="//@classes.1/@properties.1"/>
+    <properties xsi:type="soopl:ComplexTypeProperty" name="currentMower" type="//@classes.1"/>
+  </classes>
+  <classes xsi:type="soopl:StatefulClass" name="Mower" initialState="//@classes.6" stateClass="//@classes.3">
+    <properties xsi:type="soopl:SimpleTypeProperty" name="name" lowerBound="1"/>
+    <properties xsi:type="soopl:ComplexTypeProperty" name="chargingUnit" lowerBound="1" type="//@classes.0" opposite="//@classes.0/@properties.0"/>
+  </classes>
+  <classes xsi:type="soopl:StateClass" name="ChargingUnitState" isAbstract="true" statefulClass="//@classes.0">
+    <methods name="finished"/>
+    <methods name="charge">
+      <parameters xsi:type="soopl:ComplexTypeParameter" name="mower" classType="//@classes.1"/>
+    </methods>
+  </classes>
+  <classes xsi:type="soopl:StateClass" name="MowerState" isAbstract="true" statefulClass="//@classes.1">
+    <methods name="driveToChargingUnit"/>
+    <methods name="charged"/>
+    <methods name="mow"/>
+    <methods name="retryCharging"/>
+  </classes>
+  <classes xsi:type="soopl:StateImplementationClass" name="ReadyStateStateImpl" superClass="//@classes.2" stateClass="//@classes.2">
+    <methods xsi:type="soopl:TransitionMethod" name="charge">
+      <parameters xsi:type="soopl:ComplexTypeParameter" name="mower" classType="//@classes.1"/>
+      <transitions targetState="//@classes.5">
+        <actions xsi:type="soopl:AssignProperty" parameter="//@classes.4/@methods.0/@parameters.0" property="//@classes.0/@properties.1"/>
+      </transitions>
+    </methods>
+  </classes>
+  <classes xsi:type="soopl:StateImplementationClass" name="BusyStateStateImpl" superClass="//@classes.2" entryMethod="//@classes.2/@methods.0" stateClass="//@classes.2">
+    <methods xsi:type="soopl:TransitionMethod" name="finished">
+      <transitions targetState="//@classes.4">
+        <actions xsi:type="soopl:CallMethodOfProperty" calledMethod="//@classes.3/@methods.1" property="//@classes.0/@properties.1"/>
+      </transitions>
+    </methods>
+  </classes>
+  <classes xsi:type="soopl:StateImplementationClass" name="ChargedStateStateImpl" superClass="//@classes.3" entryMethod="//@classes.3/@methods.2" stateClass="//@classes.3">
+    <methods xsi:type="soopl:TransitionMethod" name="mow">
+      <transitions targetState="//@classes.7"/>
+    </methods>
+  </classes>
+  <classes xsi:type="soopl:StateImplementationClass" name="LowBatteryStateStateImpl" superClass="//@classes.3" entryMethod="//@classes.3/@methods.0" stateClass="//@classes.3">
+    <methods xsi:type="soopl:TransitionMethod" name="driveToChargingUnit">
+      <transitions targetState="//@classes.9">
+        <guard xsi:type="soopl:PropertyIsInState" inState="//@classes.5" property="//@classes.1/@properties.1"/>
+      </transitions>
+      <transitions targetState="//@classes.8">
+        <actions xsi:type="soopl:CallMethodOfProperty" calledMethod="//@classes.2/@methods.1" property="//@classes.1/@properties.1">
+          <parameterBinding parameter="//@classes.4/@methods.0/@parameters.0"/>
+        </actions>
+        <guard xsi:type="soopl:PropertyIsInState" inState="//@classes.4" property="//@classes.1/@properties.1"/>
+      </transitions>
+    </methods>
+  </classes>
+  <classes xsi:type="soopl:StateImplementationClass" name="ChargingStateStateImpl" superClass="//@classes.3" stateClass="//@classes.3">
+    <methods xsi:type="soopl:TransitionMethod" name="charged">
+      <transitions targetState="//@classes.6"/>
+    </methods>
+  </classes>
+  <classes xsi:type="soopl:StateImplementationClass" name="WaitingStateStateImpl" superClass="//@classes.3" entryMethod="//@classes.3/@methods.3" stateClass="//@classes.3">
+    <methods xsi:type="soopl:TransitionMethod" name="retryCharging">
+      <transitions targetState="//@classes.7"/>
+    </methods>
+  </classes>
+</soopl:Package>

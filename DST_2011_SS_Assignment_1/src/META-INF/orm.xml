@@ -1,0 +1,83 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<entity-mappings xmlns="http://java.sun.com/xml/ns/persistence/orm"
+		xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+		xsi:schemaLocation="http://java.sun.com/xml/ns/persistence/orm http://java.sun.com/xml/ns/persistence/orm_2_0.xsd"
+		version="2.0">
+		
+   	<persistence-unit-metadata>
+   		<persistence-unit-defaults>
+   			<entity-listeners>
+				<entity-listener class="dst1.listener.LURPListener">
+					<pre-persist method-name="preCreate" />
+					<post-persist method-name="postCreate" />
+					<pre-remove method-name="preRemove" />
+					<post-remove method-name="postRemove" />
+					<pre-update method-name="preUpdate" />
+					<post-update method-name="postUpdate" />
+					<post-load method-name="postLoad" />
+				</entity-listener>
+			</entity-listeners>
+		</persistence-unit-defaults>
+	</persistence-unit-metadata>
+			
+	<entity class="dst1.model.Computer" access="PROPERTY">
+   		
+   		<table>
+   			<unique-constraint>
+   				<column-name>name</column-name>
+   			</unique-constraint>
+   		</table>
+   		
+   		<named-query name="findComputerByLocation">
+   			<description>Returns all Computers from a certain location. This location is a named parameter, use :location therefore</description>
+   			<!-- SQL-QUERY -->
+   			<!-- SELECT DISTINCT c.* FROM computer AS c LEFT JOIN computer_execution AS ce ON c.id = ce.computer_id LEFT JOIN execution AS e ON ce.execution_id = e.id WHERE c.location LIKE 'AUT-VIE@%'; -->
+   			<query>
+   				SELECT DISTINCT c FROM Computer c LEFT JOIN FETCH c.execution WHERE c.location LIKE :location
+   			</query>
+   		</named-query>
+
+		<entity-listeners>
+			<entity-listener class="dst1.listener.UpdateListener">
+				<pre-update method-name="preUpdate"/>
+			</entity-listener>
+			<entity-listener class="dst1.listener.CreationListener">
+				<pre-persist method-name="preCreate"/>
+			</entity-listener>
+		</entity-listeners>
+
+   		<attributes>  		
+   			<id name="id">
+   				<generated-value strategy="IDENTITY"/>
+   			</id>
+   			
+   			<basic name="name" />
+			<basic name="CPUs" />
+   			<basic name="location" />
+   			<basic name="creationDate" />
+   			<basic name="lastUpdate" />
+   			
+   			<!-- N:1 - Computer - Cluster -->
+   			<many-to-one name="cluster" target-entity="dst1.model.Cluster">
+   				<join-column name="CLUSTER_ID" referenced-column-name="ID" insertable="false" updatable="false"/>
+   				<cascade>
+   					<cascade-all/>
+   				</cascade>
+   			</many-to-one>
+   			
+   			<!-- N:M - Computer - Execution -->
+   			<many-to-many name="execution" target-entity="dst1.model.Execution" mapped-by="computers" fetch="LAZY">
+   				<!--
+   				<join-table name="COMPUTER_EXECUTION">
+   					 <join-column name="COMPUTER_ID" referenced-column-name="ID" />
+   					 <inverse-join-column name="EXECUTION_ID" referenced-column-name="ID"/>
+   				</join-table>
+   			 	-->
+   				<cascade>
+   					<cascade-all/>
+   				</cascade>
+   			</many-to-many>	
+   		</attributes>
+   		
+   	</entity>
+</entity-mappings>

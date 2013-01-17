@@ -1,0 +1,59 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project name="Dst3_2_Sample" default="compile" basedir=".">
+    <property name="src.dir" value="src"/>
+    <property name="build.dir" value="build"/>
+    <property name="lib.dir" value="../../lib"/>
+    
+    <path id="classpath">
+        <pathelement location="${build.dir}"/>
+        <fileset dir="${lib.dir}">
+            <include name="javassist.jar"/>
+            <include name="dst3_2_injector.jar"/>
+        </fileset>
+    </path>
+    
+    <target name="compile">
+        <mkdir dir="${build.dir}"/>
+        <javac srcdir="${src.dir}" destdir="${build.dir}"
+               classpathref="classpath"
+               debug="true" deprecation="true"
+               includeantruntime="false"/>
+    </target>
+
+    <!-- set your main class -->
+    <target name="run" depends="compile">
+        <java classname="dst3.depinj.sample.Main" fork="true" classpathref="classpath"/>
+    </target>
+
+    <!-- set your main class with agent support -->
+    <target name="run-with-agent" depends="compile">
+        <java classname="dst3.depinj.sample.Main2" fork="true" classpathref="classpath">
+            <jvmarg value="-javaagent:${lib.dir}/dst3_2_agent.jar"/>
+        </java>
+    </target>
+    
+	<!-- http://www.sjmp.de/java/ant-java-tasks-mit-eclipse-debuggen/ -->
+	<target name="debugWithEclipse" depends="compile" description="Launches an ant-task in debug-mode for eclipse">
+	   <java classname="dst3.depinj.sample.Main" classpathref="classpath" fork= "true">
+	      <jvmarg value="-Xdebug"/>
+	      <jvmarg value="-Xnoagent"/>
+	      <jvmarg value="-Djava.compiler=NONE"/>
+	      <jvmarg value="-Xrunjdwp:transport=dt_socket,server=y,suspend=y,address=8000"/>
+	   </java>
+	</target>
+	
+	<target name="debugAgentWithEclipse" depends="compile" description="Launches an ant-task in debug-mode for eclipse">
+	   <java classname="dst3.depinj.sample.Main2" classpathref="classpath" fork= "true">
+	      <jvmarg value="-javaagent:${lib.dir}/dst3_2_agent.jar"/>
+	      <jvmarg value="-Xdebug"/>
+	      <jvmarg value="-Xnoagent"/>
+	      <jvmarg value="-Djava.compiler=NONE"/>
+	      <jvmarg value="-Xrunjdwp:transport=dt_socket,server=y,suspend=y,address=8000"/>
+	   </java>
+	</target>
+	
+    <target name="clean">
+        <delete dir="${build.dir}"/>
+    </target>
+    
+</project>

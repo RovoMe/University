@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project name="Dst3_3_Sample2" default="compile" basedir=".">
+    <property name="src.dir" value="src"/>
+	<property name="dep.dir" value="../sample/build"/>
+    <property name="build.dir" value="build"/>
+    <property name="lib.dir" value="../../lib"/>
+    <property name="plugins.dir" value="../loader/plugins"/>
+    <property name="jarfile.name" value="dst3_3_sample2.jar"/>
+    
+    <path id="classpath">
+        <fileset dir="${lib.dir}">
+            <include name="dst3_3_executable.jar"/>
+            <include name="dst3_2_injector.jar"/>
+        </fileset>
+    </path>
+    
+    <target name="compile">
+    	<copy todir="${build.dir}" verbose="true">
+    		<fileset dir="${dep.dir}">
+    			<include name="dst3/dynload/sample/D.class"/>
+    		</fileset>
+    	</copy>
+    	<!--
+    	<property name="myclasspath" refid="classpath"/>
+    	<echo message="Classpath = ${myclasspath}"/>
+    	-->
+        <mkdir dir="${build.dir}"/>
+        <javac srcdir="${src.dir}" destdir="${build.dir}"
+               debug="true" deprecation="true"
+               includeantruntime="false">
+    		<classpath refid="classpath"/>
+        </javac>
+    </target>
+    
+    <target name="dist" depends="compile">
+        <jar destfile="${plugins.dir}/${jarfile.name}" basedir="${build.dir}"/>
+    </target>
+    
+    <target name="clean">
+        <delete dir="${build.dir}"/>
+        <delete file="${plugins.dir}/${jarfile.name}"/>
+    </target>
+</project>
