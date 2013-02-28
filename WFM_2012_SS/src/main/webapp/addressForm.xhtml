@@ -1,0 +1,74 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:h="http://java.sun.com/jsf/html"
+	template="/WEB-INF/templates/template.xhtml">
+	<ui:define name="content">
+		<f:metadata>
+    		<f:viewParam name="instanceId" value="#{addressForm.instanceId}" /> <!-- required="true" requiredMessage="You did not specify an instanceId. (The instanceId parameter is missing)" /> --> 
+    		<f:viewParam name="taskId" value="#{addressForm.taskId}" /> <!-- required="true" requiredMessage="You did not specify a taskId. (The taskId parameter is missing)" /> -->
+		</f:metadata>
+
+		<h1>#{m.addressForm_title}</h1>
+		<p>#{m.addressForm_description}</p>
+		<h:form id="addressForm">			
+			<table class="rounded-corner">
+				<thead>
+					<tr>
+						<th scope="col"><div id="start">Customer information</div></th>
+						<th scope="col"><div id="end"> </div></th>
+					</tr>
+				</thead>
+				<tbody>
+					<tr class="odd">
+						<td><h:outputText value="#{m.addressForm_firstName}" /></td>
+						<td><h:inputText id="firstName" value="#{addressForm.customer.firstName}" required="true"/></td>
+					</tr>
+					<tr class="even">
+						<td><h:outputText value="#{m.addressForm_lastName}" /></td>
+						<td><h:inputText id="lastName" value="#{addressForm.customer.lastName}" required="true"/></td>
+					</tr>
+					<tr class="odd">
+						<td><h:outputText value="#{m.addressForm_street}" /></td>
+						<td><h:inputText id="street" value="#{addressForm.customer.address.street}" required="true"/></td>
+					</tr>
+					<tr class="even">
+						<td><h:outputText value="#{m.addressForm_zip}" /></td>
+						<td><h:inputText id="zip" value="#{addressForm.customer.address.zip}" required="true"/></td>
+					</tr>
+					<tr class="odd">
+						<td><h:outputText value="#{m.addressForm_city}" /></td>
+						<td><h:inputText id="city" value="#{addressForm.customer.address.city}" required="true"/></td>
+					</tr>
+					<tr class="even">
+						<td><h:outputText value="#{m.addressForm_country}" /></td>
+						<td><h:inputText id="country" value="#{addressForm.customer.address.country}" required="true"/></td>
+					</tr>
+					<tr class="odd">
+						<td><h:outputText value="#{m.addressForm_telNo}" /></td>
+						<td><h:inputText id="telNo" value="#{addressForm.customer.telNo}" /></td>
+					</tr>
+					<tr class="even">
+						<td><h:outputText value="#{m.addressForm_mailAddress}" /></td>
+						<td><h:inputText id="email" value="#{addressForm.customer.mailAddress}" /></td>
+					</tr>
+					<tr class="odd">
+						<td></td>
+						<td><h:commandButton value="Submit" type="submit" action="#{addressForm.submit}" /> <h:commandButton value="Reset" type="reset"/></td>
+					</tr>
+				</tbody>
+				<tfoot>	
+					<tr>
+						<td><div id="start"> </div></td>
+						<td><div id="end"> </div></td>
+					</tr>
+				</tfoot>
+			</table>
+			<h:inputHidden id="hiddenInstanceId" value="#{addressForm.instanceId}" />
+			<h:inputHidden id="hiddenTaskId" value="#{addressForm.taskId}" />
+			<f:event type="postValidate" listener="#{addressForm.validate}"/>
+		</h:form>
+	</ui:define>
+
+</ui:composition>

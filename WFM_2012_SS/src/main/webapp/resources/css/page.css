@@ -1,0 +1,119 @@
+@CHARSET "ISO-8859-1";
+
+body
+{
+	margin: 0px 0px;
+	padding: 0px;
+	text-align: center;	
+	background: #ececec;
+}
+table#page
+{
+	background: #999999;
+	width:  100%;	
+}
+
+div#header
+{
+	font-family: "Lucida Sans Unicode", "Lucida Grande", Sans-Serif;
+	font-size: 12px;
+	text-align: left;
+	border-collapse: collapse;
+	background: #e8edff;
+	padding-left: 10px;
+	padding-top: 5px;
+	padding-bottom: 5px;
+	cellpadding: 0px; 
+	cellspacing: 0px;
+}
+
+hr#header
+{
+	padding: 0px;
+	margin-top: 0px;
+	margin-bottom: 10px;
+}
+
+div#container
+{
+	margin-top: 0px;
+	margin-left: auto;
+	margin-right: auto;
+	margin-bottom: 10px;
+	border-style: solid;
+	border-color: #DEDEDE;
+	width: 80%;
+	minimal-width: 0%;
+	background: #ffffff;
+	padding: 0px;
+}
+
+div#content
+{
+	margin-left: auto;
+	margin-right: auto;
+	text-align: center;
+	background: #ffffff;
+	padding: 10px;
+}
+
+hr#footer
+{
+	margin-top: 10px;
+	padding: 0px;
+}
+div#footer
+{	
+	text-align: center;
+	padding-bottom: 25px;
+	background: #DEDEDE;
+	overflow: hidden;
+	position: absolute;
+	height: 25px; 
+	bottom: 0;
+	width: 100%;
+}
+
+.header.row
+{ 
+	height: 100px; 
+}
+.body.row 
+{ 
+	top: 110px; 
+	bottom: 50px; 
+	padding: 1em; 
+}
+.footer.row 
+{ 
+	height: 35px; 
+	bottom: 0; 
+}
+
+ul.messages
+{
+	background: red;
+	margin:16px;
+	padding: 8px;
+}
+.infoMessages
+{
+	disploy: none;
+	font-family: courier;
+	text-color: #000000;
+}
+.errorMessages
+{
+	font-family: courier;
+	text-color: #000000;
+}
+.warnMessages
+{
+	font-family: courier;
+	text-color: yellow;
+}
+.fatalMessages
+{
+	font-family: courier;
+	text-color: #9000A1;
+}

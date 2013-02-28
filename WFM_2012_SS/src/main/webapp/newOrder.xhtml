@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:h="http://java.sun.com/jsf/html"
+	template="/WEB-INF/templates/template.xhtml">
+	<ui:define name="content">
+		<h1>#{m.newOrder_title}</h1>
+		<h:form id="orderForm">
+			<h:dataTable value="#{newOrder.items}" var="v_entry" id="taskList" styleClass="rounded-corner" rowClasses="odd,even">
+				<h:column>
+					<f:facet name="header"><div id="start">#{m.newOrder_prod_id}</div></f:facet>
+					<h:outputText value="#{v_entry.product.id}" />
+					<f:facet name="footer"><div id="start"> </div></f:facet>
+				</h:column>
+				<h:column>
+					<f:facet name="header"><div id="mid">#{m.newOrder_prod_name}</div></f:facet>
+					<h:outputText value="#{v_entry.product.name}" />
+					<f:facet name="footer"><div id="mid"> </div></f:facet>
+				</h:column>
+				<h:column>
+					<f:facet name="header"><div id="mid">#{m.newOrder_prod_price}</div></f:facet>
+					<h:outputText value="#{v_entry.product.price}" />
+					<f:facet name="footer"><div id="mid"> </div></f:facet>
+				</h:column>
+				<h:column>
+					<f:facet name="header"><div id="end">#{m.newOrder_prod_quantity}</div></f:facet>
+					<h:inputText value="#{v_entry.quantity}" >
+						<f:convertNumber type="number"/>
+						<f:validateLongRange minimum="0" />
+					</h:inputText>
+					<f:facet name="footer"><div id="end"> </div></f:facet>
+				</h:column>
+			</h:dataTable>
+			
+			<h:commandButton value="Submit"	action="#{newOrder.start}" type="submit">
+				<f:param name="processDescription" value="#{m.app_process_description}" />
+			</h:commandButton>
+			<h:commandButton value="Reset" type="reset" />
+		</h:form>
+	</ui:define>
+</ui:composition>

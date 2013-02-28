@@ -1,0 +1,120 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE log4j:configuration SYSTEM "log4j.dtd">
+ 
+<log4j:configuration xmlns:log4j="http://jakarta.apache.org/log4j/" debug="false">
+ 
+   <!-- Activiti Logger -->
+   <appender name="ActivitiConsoleAppender" class="org.apache.log4j.ConsoleAppender">
+      <param name="Threshold" value="INFO" />
+      <layout class="org.apache.log4j.PatternLayout">
+         <param name="ConversionPattern" value="%d %-5p  [%c{1}] %m %n" />
+      </layout>
+   </appender>
+ 
+   <appender name="ActivitiFileAppender" class="org.apache.log4j.RollingFileAppender">
+      <param name="Threshold" value="INFO" />
+      <param name="File" value="Activiti.log"/>
+      <layout class="org.apache.log4j.PatternLayout">
+         <param name="ConversionPattern" value="%d %-5p  [%c{1}] %m %n" />
+      </layout>
+   </appender>
+   
+   <appender name="JettiConsoleAppender" class="org.apache.log4j.ConsoleAppender">
+      <param name="Threshold" value="INFO" />
+      <layout class="org.apache.log4j.PatternLayout">
+         <param name="ConversionPattern" value="%d %-5p  [%c{1}] %m %n" />
+      </layout>
+   </appender>
+   
+   <appender name="JettiFileAppender" class="org.apache.log4j.RollingFileAppender">
+      <param name="Threshold" value="INFO" />
+      <param name="File" value="Jetti.log"/>
+      <layout class="org.apache.log4j.PatternLayout">
+         <param name="ConversionPattern" value="%d %-5p  [%c{1}] %m %n" />
+      </layout>
+   </appender>
+   
+   <!-- Application Logger -->
+   <appender name="consoleAppender" class="org.apache.log4j.ConsoleAppender">
+      <param name="Threshold" value="INFO" />
+      <layout class="org.apache.log4j.PatternLayout">
+         <param name="ConversionPattern" value="%d %-5p  [%c{1}] %m %n" />
+      </layout>
+   </appender>
+ 
+   <appender name="fileAppender" class="org.apache.log4j.RollingFileAppender">
+      <param name="Threshold" value="INFO" />
+      <param name="File" value="PaymentProcess.log"/>
+      <layout class="org.apache.log4j.PatternLayout">
+         <param name="ConversionPattern" value="%d %-5p  [%c{1}] %m %n" />
+      </layout>
+   </appender>
+ 
+   <!-- Logger -->
+   <logger name="org.apache.cxf" additivity="false">
+      <level value="INFO" />
+      <appender-ref ref="JettiConsoleAppender"/>
+      <appender-ref ref="JettiFileAppender"/>
+   </logger>
+   
+   <!-- suppress warning stack-trace for WebApplicationExceptions -->
+   <logger name="org.apache.cxf.jaxrs.impl.WebApplicationExceptionMapper" additivity="false">
+      <level value="ERROR" />
+      <appender-ref ref="JettiConsoleAppender"/>
+      <appender-ref ref="JettiFileAppender"/>
+   </logger>
+   
+   <logger name="org.apache.cxf.service.factory.ReflectionServiceFactoryBean" additivity="false">
+      <level value="ERROR" />
+      <appender-ref ref="JettiConsoleAppender"/>
+      <appender-ref ref="JettiFileAppender"/>
+   </logger>
+   
+   <logger name="org.apache.cxf.endpoint.ServerImpl" additivity="false">
+      <level value="INFO" />
+      <appender-ref ref="JettiConsoleAppender"/>
+      <appender-ref ref="JettiFileAppender"/>
+   </logger>
+   
+   <logger name="org.apache.cxf.phase.PhaseInterceptorChain" additivity="false">
+      <level value="ERROR" />
+      <appender-ref ref="JettiConsoleAppender"/>
+      <appender-ref ref="JettiFileAppender"/>
+   </logger>
+   
+   <logger name="org.apache.ibatis" additivity="false" >
+      <level value="ERROR" />
+      <appender-ref ref="JettiConsoleAppender"/>
+      <appender-ref ref="JettiFileAppender"/>
+   </logger>
+   
+   <logger name="org.springframework" additivity="false">
+      <level value="ERROR" />
+      <appender-ref ref="ActivitiConsoleAppender"/>
+      <appender-ref ref="ActivitiFileAppender"/>
+   </logger>
+   
+   <logger name="java.sql.Connection" additivity="false" >
+      <level value="ERROR" />
+      <appender-ref ref="ActivitiConsoleAppender"/>
+      <appender-ref ref="ActivitiFileAppender"/>
+   </logger>
+   
+   <logger name="org.eclipse.jetty" additivity="false">
+      <level value="ERROR" />
+      <appender-ref ref="JettiFileAppender"/>
+   </logger>
+   
+   <logger name="org.activiti.engine" additivity="false">
+      <level value="INFO" />
+      <appender-ref ref="ActivitiConsoleAppender"/>
+      <appender-ref ref="ActivitiFileAppender"/>
+   </logger>   
+   
+   <logger name="wfm" additivity="false" >
+      <level value="INFO" />
+      <appender-ref ref="consoleAppender"/>
+      <appender-ref ref="fileAppender"/>
+   </logger>
+   
+</log4j:configuration>

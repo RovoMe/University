@@ -1,0 +1,132 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:c="http://java.sun.com/jsp/jstl/core"
+	template="/WEB-INF/templates/template.xhtml">
+	<ui:define name="content">
+		<f:metadata>
+    		<f:viewParam name="instanceId" value="#{acknowledgeForm.instanceId}" required="true" />
+    		<f:viewParam name="taskId" value="#{acknowledgeForm.taskId}" required="true" />
+		</f:metadata>
+		
+		<h1>#{m.acknowledgeForm_title}</h1>
+		<p>#{m.acknowledgeForm_description}</p>
+		<h:form>				
+			<table class="rounded-corner">
+				<thead>
+					<tr>
+						<th scope="col"><div id="start"> </div></th>
+						<th scope="col"><div id="end">#{m.acknowledgeForm_thead}</div></th>
+					</tr>
+				</thead>
+				<tbody>
+					<tr class="odd">
+						<td><h:outputText value="#{m.acknowledgeForm_customerName}" /></td>
+						<td><h:inputText value="#{acknowledgeForm.customerName}" readonly="true" /></td>
+					</tr>
+					<tr class="even">
+						<td><h:outputText value="#{m.acknowledgeForm_customerAddress}" /></td>
+						<td><h:inputText value="#{acknowledgeForm.customerStreet}" readonly="true" /></td>
+					</tr>
+					<tr class="odd">
+						<td></td>
+						<td><h:inputText value="#{acknowledgeForm.customerZipCity}" readonly="true" /></td>
+					</tr>
+					<tr class="even">
+						<td></td>
+						<td><h:inputText value="#{acknowledgeForm.customerCountry}" readonly="true" /></td>
+					</tr>
+					<tr class="odd">
+						<td><h:outputText value="#{m.acknowledgeForm_customerEMail}" /></td>
+						<td><h:inputText value="#{acknowledgeForm.customerEMail}" readonly="true" /></td>
+					</tr>
+				</tbody>
+				<tfoot>	
+					<tr>
+						<td><div id="start"></div></td>
+						<td><div id="end"></div></td>
+					</tr>
+				</tfoot>
+			</table>
+			<br />
+			
+			<h:panelGrid columns="2" styleClass="rounded-corner" rowClasses="odd,even" rendered="#{acknowledgeForm.isBankTransfer}">
+ 				<f:facet name="header">
+ 					<h:panelGroup>
+	 					<h:panelGroup styleClass="start" layout="block" style="width: 40%; overflow:hidden;" />
+						<h:panelGroup styleClass="end" layout="block" style="width: 48.2%; overflow:hidden;" >#{acknowledgeForm.isBankTransfer ? m.acknowledgeForm_bankThead : ''}</h:panelGroup>
+					</h:panelGroup>
+				</f:facet>
+				<h:outputText value="#{m.acknowledgeForm_bankName}" rendered="#{acknowledgeForm.isBankTransfer}" />
+				<h:inputText value="#{acknowledgeForm.bankName}" readonly="true" rendered="#{acknowledgeForm.isBankTransfer}" />
+				<h:outputText value="#{m.acknowledgeForm_bankCode}" rendered="#{acknowledgeForm.isBankTransfer}" />
+				<h:inputText value="#{acknowledgeForm.bankCode}" readonly="true" rendered="#{acknowledgeForm.isBankTransfer}" />
+				<h:outputText value="#{m.acknowledgeForm_accountNumber}" rendered="#{acknowledgeForm.isBankTransfer}" />
+				<h:inputText value="#{acknowledgeForm.accountNumber}" readonly="true" rendered="#{acknowledgeForm.isBankTransfer}" />
+				<h:outputText value="#{m.acknowledgeForm_holdersName}" rendered="#{acknowledgeForm.isBankTransfer}" />
+				<h:inputText value="#{acknowledgeForm.holdersName}" readonly="true" rendered="#{acknowledgeForm.isBankTransfer}" />
+				<f:facet name="footer">
+					<h:panelGroup>
+						<h:panelGroup styleClass="start" layout="block" style="width: 44.4%; overflow:hidden;" />
+						<h:panelGroup styleClass="end" layout="block" style="width: 48.2%; overflow:hidden;" />
+					</h:panelGroup>
+				</f:facet>
+			</h:panelGrid>
+			
+			<h:panelGrid columns="2" styleClass="rounded-corner" rowClasses="odd,even" rendered="#{acknowledgeForm.isCreditCard}">
+				<f:facet name="header">
+					<h:panelGroup>
+					 	<h:panelGroup styleClass="start" layout="block" style="width: 40%; overflow:hidden;"  />
+						<h:panelGroup styleClass="end" layout="block" style="width: 48.2%; overflow:hidden;" >#{acknowledgeForm.isCreditCard ? m.acknowledgeForm_creditCardThead : ''}</h:panelGroup>
+					</h:panelGroup>
+				</f:facet>
+				<h:outputText value="#{m.acknowledgeForm_cardInstitute}" rendered="#{acknowledgeForm.isCreditCard}" />
+				<h:inputText value="#{acknowledgeForm.cardInstitute}" readonly="true" rendered="#{acknowledgeForm.isCreditCard}" />
+				<h:outputText value="#{m.acknowledgeForm_cardNumber}" rendered="#{acknowledgeForm.isCreditCard}" />
+				<h:inputText value="#{acknowledgeForm.cardNumber}" readonly="true" rendered="#{acknowledgeForm.isCreditCard}" />
+				<h:outputText value="#{m.acknowledgeForm_cardOwnerName}" rendered="#{acknowledgeForm.isCreditCard}" />
+				<h:inputText value="#{acknowledgeForm.cardOwnerName}" readonly="true" rendered="#{acknowledgeForm.isCreditCard}" />
+				<h:outputText value="#{m.acknowledgeForm_cardExpirationDate}" rendered="#{acknowledgeForm.isCreditCard}" />
+				<h:inputText value="#{acknowledgeForm.cardExpirationDate}" readonly="true" rendered="#{acknowledgeForm.isCreditCard}" />
+				<h:outputText value="#{m.acknowledgeForm_cardCVV2Code}" rendered="#{acknowledgeForm.isCreditCard}" />
+				<h:inputText value="#{acknowledgeForm.cardCVV2Code}" readonly="true" rendered="#{acknowledgeForm.isCreditCard}" />
+				<f:facet name="footer">
+					<h:panelGroup>
+						<h:panelGroup styleClass="start" layout="block" style="width: 44.1%; overflow:hidden;" />
+						<h:panelGroup styleClass="end" layout="block" style="width: 49.2%; overflow:hidden;" />
+					</h:panelGroup>
+				</f:facet>
+			</h:panelGrid>
+
+			<br />
+			<table class="rounded-corner">
+				<thead>
+					<tr>
+						<th scope="col"><div id="start"> </div></th>
+						<th scope="col"><div id="end">#{m.acknowledgeForm_priceThead}</div></th>
+					</tr>
+				</thead>
+				<tbody>
+					<tr class="odd">
+						<td><h:outputText value="#{m.acknowledgeForm_price}" /></td>
+						<td><h:inputText value="#{acknowledgeForm.price}" readonly="true" /></td>
+					</tr>
+					<tr class="even">
+						<td></td>
+						<td><h:commandButton value="Submit" type="submit" action="#{acknowledgeForm.submit}" ></h:commandButton> 
+						<h:commandButton value="Cancel" immediate="true" action="#{acknowledgeForm.cancel}" /></td>
+					</tr>
+				</tbody>
+				<tfoot>	
+					<tr>
+						<td><div id="start"> </div></td>
+						<td><div id="end"> </div></td>
+					</tr>
+				</tfoot>
+			</table>
+		</h:form>
+	</ui:define>
+
+</ui:composition>

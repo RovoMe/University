@@ -1,0 +1,205 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<definitions xmlns="http://www.omg.org/spec/BPMN/20100524/MODEL" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:activiti="http://activiti.org/bpmn" xmlns:bpmndi="http://www.omg.org/spec/BPMN/20100524/DI" xmlns:omgdc="http://www.omg.org/spec/DD/20100524/DC" xmlns:omgdi="http://www.omg.org/spec/DD/20100524/DI" typeLanguage="http://www.w3.org/2001/XMLSchema" expressionLanguage="http://www.w3.org/1999/XPath" targetNamespace="http://www.activiti.org/test">
+  <process id="process1" name="process1">
+    <startEvent id="startevent1" name="Start">
+      <extensionElements>
+        <activiti:formProperty id="price" name="Price" type="long" required="true"></activiti:formProperty>
+      </extensionElements>
+    </startEvent>
+    <parallelGateway id="parallelgateway1" name="Parallel Gateway"></parallelGateway>
+    <parallelGateway id="parallelgateway2" name="Parallel Gateway"></parallelGateway>
+    <scriptTask id="scripttask3" name="Script Task" scriptFormat="groovy">
+      <script><![CDATA[out:println 'Task 3: '
+out:println 'Selection: '+paymentModalities
+out:println 'Price: '+price]]></script>
+    </scriptTask>
+    <endEvent id="endevent1" name="End"></endEvent>
+    <userTask id="getPaymentModality" name="get payment modality" activiti:assignee="kermit">
+      <extensionElements>
+        <activiti:formProperty id="paymentModalities" name="Payment Modalities" type="enum" default="bankTransferModality" required="true">
+          <activiti:value id="bankTransferModality" name="Bank Transfer Service"></activiti:value>
+          <activiti:value id="creditCardModality" name="Credit Card Service"></activiti:value>
+          <activiti:value id="billingModality" name="Billing Service"></activiti:value>
+        </activiti:formProperty>
+      </extensionElements>
+    </userTask>
+    <userTask id="getCouponHash" name="get coupon hash" activiti:assignee="kermit">
+      <extensionElements>
+        <activiti:formProperty id="hash" name="Coupon Hash" type="string" required="false"></activiti:formProperty>
+      </extensionElements>
+    </userTask>
+    <subProcess id="subprocess1" name="Sub Process">
+      <startEvent id="startevent2" name="Start"></startEvent>
+      <endEvent id="endevent2" name="End"></endEvent>
+      <serviceTask id="WebService" name="Service Task" default=""></serviceTask>
+      <scriptTask id="scripttask4" name="Script Task" scriptFormat="groovy">
+        <script><![CDATA[execution.setVariable("price",price-couponValue)
+out:println 'New price: '+price
+]]></script>
+      </scriptTask>
+      <endEvent id="endevent3" name="ErrorEnd">
+        <errorEventDefinition errorRef="couponValidationError"></errorEventDefinition>
+      </endEvent>
+      <exclusiveGateway id="exclusivegateway1" name="Exclusive Gateway"></exclusiveGateway>
+      <exclusiveGateway id="exclusivegateway2" name="Exclusive Gateway"></exclusiveGateway>
+      <sequenceFlow id="flow13" name="" sourceRef="startevent2" targetRef="exclusivegateway1"></sequenceFlow>
+      <sequenceFlow id="flow14" name="" sourceRef="scripttask4" targetRef="exclusivegateway2"></sequenceFlow>
+      <sequenceFlow id="flow15" name="" sourceRef="WebService" targetRef="scripttask4"></sequenceFlow>
+      <sequenceFlow id="flow16" name="" sourceRef="WebService" targetRef="endevent3"></sequenceFlow>
+      <sequenceFlow id="flow19" name="" sourceRef="exclusivegateway1" targetRef="WebService">
+        <conditionExpression xsi:type="tFormalExpression"><![CDATA[${hash != '' }]]></conditionExpression>
+      </sequenceFlow>
+      <sequenceFlow id="flow20" name="" sourceRef="exclusivegateway1" targetRef="exclusivegateway2">
+        <conditionExpression xsi:type="tFormalExpression"><![CDATA[${hash == ''}]]></conditionExpression>
+      </sequenceFlow>
+      <sequenceFlow id="flow21" name="" sourceRef="exclusivegateway2" targetRef="endevent2"></sequenceFlow>
+    </subProcess>
+    <boundaryEvent id="boundaryerror1" cancelActivity="true" attachedToRef="subprocess1">
+      <errorEventDefinition errorRef="couponValidationError"></errorEventDefinition>
+    </boundaryEvent>
+    <scriptTask id="reset" name="reset" scriptFormat="groovy">
+      <script><![CDATA[out:println 'ERROR validating coupon'
+execution.setVariable('hash', '')]]></script>
+    </scriptTask>
+    <sequenceFlow id="flow5" name="" sourceRef="parallelgateway2" targetRef="scripttask3"></sequenceFlow>
+    <sequenceFlow id="flow6" name="" sourceRef="scripttask3" targetRef="endevent1"></sequenceFlow>
+    <sequenceFlow id="flow7" name="" sourceRef="startevent1" targetRef="parallelgateway1"></sequenceFlow>
+    <sequenceFlow id="flow8" name="" sourceRef="parallelgateway1" targetRef="getPaymentModality"></sequenceFlow>
+    <sequenceFlow id="flow9" name="" sourceRef="getPaymentModality" targetRef="parallelgateway2"></sequenceFlow>
+    <sequenceFlow id="flow10" name="" sourceRef="parallelgateway1" targetRef="getCouponHash"></sequenceFlow>
+    <sequenceFlow id="flow11" name="" sourceRef="getCouponHash" targetRef="subprocess1"></sequenceFlow>
+    <sequenceFlow id="flow12" name="" sourceRef="subprocess1" targetRef="parallelgateway2"></sequenceFlow>
+    <sequenceFlow id="flow17" name="" sourceRef="boundaryerror1" targetRef="reset"></sequenceFlow>
+    <sequenceFlow id="flow18" name="" sourceRef="reset" targetRef="getCouponHash"></sequenceFlow>
+  </process>
+  <bpmndi:BPMNDiagram id="BPMNDiagram_process1">
+    <bpmndi:BPMNPlane bpmnElement="process1" id="BPMNPlane_process1">
+      <bpmndi:BPMNShape bpmnElement="startevent1" id="BPMNShape_startevent1">
+        <omgdc:Bounds height="35" width="35" x="190" y="240"></omgdc:Bounds>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape bpmnElement="parallelgateway1" id="BPMNShape_parallelgateway1">
+        <omgdc:Bounds height="40" width="40" x="320" y="237"></omgdc:Bounds>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape bpmnElement="parallelgateway2" id="BPMNShape_parallelgateway2">
+        <omgdc:Bounds height="40" width="40" x="930" y="237"></omgdc:Bounds>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape bpmnElement="scripttask3" id="BPMNShape_scripttask3">
+        <omgdc:Bounds height="55" width="105" x="1050" y="230"></omgdc:Bounds>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape bpmnElement="endevent1" id="BPMNShape_endevent1">
+        <omgdc:Bounds height="35" width="35" x="1210" y="240"></omgdc:Bounds>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape bpmnElement="getPaymentModality" id="BPMNShape_getPaymentModality">
+        <omgdc:Bounds height="55" width="105" x="440" y="150"></omgdc:Bounds>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape bpmnElement="getCouponHash" id="BPMNShape_getCouponHash">
+        <omgdc:Bounds height="55" width="105" x="370" y="352"></omgdc:Bounds>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape bpmnElement="subprocess1" id="BPMNShape_subprocess1" isExpanded="true">
+        <omgdc:Bounds height="205" width="387" x="524" y="277"></omgdc:Bounds>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape bpmnElement="startevent2" id="BPMNShape_startevent2">
+        <omgdc:Bounds height="35" width="35" x="550" y="303"></omgdc:Bounds>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape bpmnElement="endevent2" id="BPMNShape_endevent2">
+        <omgdc:Bounds height="35" width="35" x="860" y="364"></omgdc:Bounds>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape bpmnElement="WebService" id="BPMNShape_WebService">
+        <omgdc:Bounds height="55" width="105" x="610" y="357"></omgdc:Bounds>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape bpmnElement="scripttask4" id="BPMNShape_scripttask4">
+        <omgdc:Bounds height="55" width="105" x="740" y="357"></omgdc:Bounds>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape bpmnElement="endevent3" id="BPMNShape_endevent3">
+        <omgdc:Bounds height="35" width="35" x="645" y="430"></omgdc:Bounds>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape bpmnElement="exclusivegateway1" id="BPMNShape_exclusivegateway1">
+        <omgdc:Bounds height="40" width="40" x="642" y="300"></omgdc:Bounds>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape bpmnElement="exclusivegateway2" id="BPMNShape_exclusivegateway2">
+        <omgdc:Bounds height="40" width="40" x="772" y="300"></omgdc:Bounds>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNEdge bpmnElement="flow13" id="BPMNEdge_flow13">
+        <omgdi:waypoint x="585" y="320"></omgdi:waypoint>
+        <omgdi:waypoint x="642" y="320"></omgdi:waypoint>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge bpmnElement="flow14" id="BPMNEdge_flow14">
+        <omgdi:waypoint x="792" y="357"></omgdi:waypoint>
+        <omgdi:waypoint x="792" y="340"></omgdi:waypoint>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge bpmnElement="flow15" id="BPMNEdge_flow15">
+        <omgdi:waypoint x="715" y="384"></omgdi:waypoint>
+        <omgdi:waypoint x="740" y="384"></omgdi:waypoint>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge bpmnElement="flow16" id="BPMNEdge_flow16">
+        <omgdi:waypoint x="662" y="412"></omgdi:waypoint>
+        <omgdi:waypoint x="662" y="430"></omgdi:waypoint>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge bpmnElement="flow19" id="BPMNEdge_flow19">
+        <omgdi:waypoint x="662" y="340"></omgdi:waypoint>
+        <omgdi:waypoint x="662" y="357"></omgdi:waypoint>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge bpmnElement="flow20" id="BPMNEdge_flow20">
+        <omgdi:waypoint x="682" y="320"></omgdi:waypoint>
+        <omgdi:waypoint x="772" y="320"></omgdi:waypoint>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge bpmnElement="flow21" id="BPMNEdge_flow21">
+        <omgdi:waypoint x="812" y="320"></omgdi:waypoint>
+        <omgdi:waypoint x="877" y="319"></omgdi:waypoint>
+        <omgdi:waypoint x="877" y="364"></omgdi:waypoint>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNShape bpmnElement="boundaryerror1" id="BPMNShape_boundaryerror1">
+        <omgdc:Bounds height="30" width="30" x="740" y="464"></omgdc:Bounds>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape bpmnElement="reset" id="BPMNShape_reset">
+        <omgdc:Bounds height="55" width="105" x="571" y="510"></omgdc:Bounds>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNEdge bpmnElement="flow5" id="BPMNEdge_flow5">
+        <omgdi:waypoint x="970" y="257"></omgdi:waypoint>
+        <omgdi:waypoint x="1050" y="257"></omgdi:waypoint>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge bpmnElement="flow6" id="BPMNEdge_flow6">
+        <omgdi:waypoint x="1155" y="257"></omgdi:waypoint>
+        <omgdi:waypoint x="1210" y="257"></omgdi:waypoint>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge bpmnElement="flow7" id="BPMNEdge_flow7">
+        <omgdi:waypoint x="225" y="257"></omgdi:waypoint>
+        <omgdi:waypoint x="320" y="257"></omgdi:waypoint>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge bpmnElement="flow8" id="BPMNEdge_flow8">
+        <omgdi:waypoint x="340" y="237"></omgdi:waypoint>
+        <omgdi:waypoint x="340" y="177"></omgdi:waypoint>
+        <omgdi:waypoint x="440" y="177"></omgdi:waypoint>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge bpmnElement="flow9" id="BPMNEdge_flow9">
+        <omgdi:waypoint x="545" y="177"></omgdi:waypoint>
+        <omgdi:waypoint x="949" y="177"></omgdi:waypoint>
+        <omgdi:waypoint x="950" y="237"></omgdi:waypoint>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge bpmnElement="flow10" id="BPMNEdge_flow10">
+        <omgdi:waypoint x="340" y="277"></omgdi:waypoint>
+        <omgdi:waypoint x="340" y="378"></omgdi:waypoint>
+        <omgdi:waypoint x="370" y="379"></omgdi:waypoint>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge bpmnElement="flow11" id="BPMNEdge_flow11">
+        <omgdi:waypoint x="475" y="379"></omgdi:waypoint>
+        <omgdi:waypoint x="524" y="379"></omgdi:waypoint>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge bpmnElement="flow12" id="BPMNEdge_flow12">
+        <omgdi:waypoint x="911" y="379"></omgdi:waypoint>
+        <omgdi:waypoint x="950" y="379"></omgdi:waypoint>
+        <omgdi:waypoint x="950" y="277"></omgdi:waypoint>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge bpmnElement="flow17" id="BPMNEdge_flow17">
+        <omgdi:waypoint x="755" y="494"></omgdi:waypoint>
+        <omgdi:waypoint x="754" y="537"></omgdi:waypoint>
+        <omgdi:waypoint x="676" y="537"></omgdi:waypoint>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge bpmnElement="flow18" id="BPMNEdge_flow18">
+        <omgdi:waypoint x="571" y="537"></omgdi:waypoint>
+        <omgdi:waypoint x="422" y="537"></omgdi:waypoint>
+        <omgdi:waypoint x="422" y="407"></omgdi:waypoint>
+      </bpmndi:BPMNEdge>
+    </bpmndi:BPMNPlane>
+  </bpmndi:BPMNDiagram>
+</definitions>

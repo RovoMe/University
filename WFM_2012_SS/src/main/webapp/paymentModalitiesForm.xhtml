@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:h="http://java.sun.com/jsf/html"
+	template="/WEB-INF/templates/template.xhtml">
+	<ui:define name="content">
+		<f:metadata>
+    		<f:viewParam name="instanceId" value="#{paymentModalitiesForm.instanceId}" required="true"/>
+    		<f:viewParam name="taskId" value="#{paymentModalitiesForm.taskId}" required="true"/>
+		</f:metadata>
+		
+		<h1>#{m.paymentModalitiesForm_title}</h1>
+		<p>#{m.paymentModalitiesForm_description}</p>
+		<h:form>				
+			<table class="rounded-corner">
+				<thead>
+					<tr>
+						<th scope="col"><div id="start"> </div></th>
+						<th scope="col"><div id="end">Payment Method</div></th>
+					</tr>
+				</thead>
+				<tbody>
+					<tr class="odd">
+						<td><h:outputText value="#{m.paymentModalitiesForm_field}" /></td>
+						<td><h:selectOneMenu value="#{paymentModalitiesForm.paymentMethod}">
+   						<f:selectItem itemValue="creditCardMethod" itemLabel="Credit Card" />
+   						<f:selectItem itemValue="bankTransferMethod" itemLabel="Bank transfer" />
+						</h:selectOneMenu></td>
+					</tr>
+					<tr class="even">
+						<td></td>
+						<td><h:commandButton value="Submit" type="submit" action="#{paymentModalitiesForm.submit}" /> <h:commandButton value="Reset" type="reset"/></td>
+					</tr>
+				</tbody>
+				<tfoot>	
+					<tr>
+						<td><div id="start"> </div></td>
+						<td><div id="end"> </div></td>
+					</tr>
+				</tfoot>
+			</table>
+		</h:form>
+	</ui:define>
+
+</ui:composition>

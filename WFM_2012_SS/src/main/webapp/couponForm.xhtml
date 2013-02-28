@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:h="http://java.sun.com/jsf/html"
+	template="/WEB-INF/templates/template.xhtml">
+	<ui:define name="content">
+		<f:metadata>
+    		<f:viewParam name="instanceId" value="#{couponForm.instanceId}" />
+    		<f:viewParam name="taskId" value="#{couponForm.taskId}" />
+		</f:metadata>
+		
+		<h1>#{m.couponForm_title}</h1>
+		<p>#{m.couponForm_description}</p>
+		<h:form id="couponForm">				
+			<table class="rounded-corner">
+				<thead>
+					<tr>
+						<th scope="col"><div id="start">Coupon</div></th>
+						<th scope="col"><div id="end"> </div></th>
+					</tr>
+				</thead>
+				<tbody>
+					<tr class="odd">
+						<td><h:outputText value="#{m.couponForm_field}" /></td>
+						<td><h:inputText id="coupon" value="#{couponForm.hash}" /></td>
+					</tr>
+					<tr class="even">
+						<td></td>
+						<td><h:commandButton id="submit" value="Submit" type="submit" action="#{couponForm.submit}" /> <h:commandButton value="Reset" type="reset"/></td>
+					</tr>
+				</tbody>
+				<tfoot>	
+					<tr>
+						<td><div id="start"> </div></td>
+						<td><div id="end"> </div></td>
+					</tr>
+				</tfoot>
+			</table>
+			<h:inputHidden id="hiddenInstanceId" value="#{couponForm.instanceId}" />
+			<h:inputHidden id="hiddenTaskId" value="#{couponForm.taskId}" />
+			<f:event type="postValidate" listener="#{couponForm.validate}" />
+		</h:form>
+	</ui:define>
+
+</ui:composition>

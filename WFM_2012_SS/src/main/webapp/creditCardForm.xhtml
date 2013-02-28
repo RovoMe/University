@@ -1,0 +1,61 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:h="http://java.sun.com/jsf/html"
+	template="/WEB-INF/templates/template.xhtml">
+	<ui:define name="content">
+		<f:metadata>
+    		<f:viewParam name="instanceId" value="#{creditCardForm.instanceId}" />
+    		<f:viewParam name="taskId" value="#{creditCardForm.taskId}" />
+		</f:metadata>
+		
+		<h1>#{m.creditCardForm_title}</h1>
+		<p>#{m.creditCardForm_description}</p>
+		<h:form id="creditCardForm">				
+			<table class="rounded-corner">
+				<thead>
+					<tr>
+						<th scope="col"><div id="start">Credit card information</div></th>
+						<th scope="col"><div id="end"> </div></th>
+					</tr>
+				</thead>
+				<tbody>
+					<tr class="odd">
+						<td><h:outputText value="#{m.creditCardForm_cardNumber}" /></td>
+						<td><h:inputText id="cardNumber" value="#{creditCardForm.cardNumber}" required="true"/></td>
+					</tr>
+					<tr class="even">
+						<td><h:outputText value="#{m.creditCardForm_nameOfOwner}" /></td>
+						<td><h:inputText id="nameOfOwner" value="#{creditCardForm.nameOfOwner}" required="true"/></td>
+					</tr>
+					<tr class="odd">
+						<td><h:outputText value="#{m.creditCardForm_expirationDate}" /></td>
+						<td><h:inputText id="expirationDate" value="#{creditCardForm.expirationDate}" required="true"/></td>
+					</tr>
+					<tr class="even">
+						<td><h:outputText value="#{m.creditCardForm_CVV2Code}" /></td>
+						<td><h:inputText id="CVV2Code" value="#{creditCardForm.CVV2Code}" required="true"/></td>
+					</tr>
+					<tr class="odd">
+						<td><h:outputText value="#{m.creditCardForm_cardType}" /></td>
+						<td><h:inputText id="cardType" value="#{creditCardForm.cardType}" required="true"/></td>
+					</tr>
+					<tr class="even">
+						<td></td>
+						<td><h:commandButton value="Submit" type="submit" action="#{creditCardForm.submit}" /> <h:commandButton value="Reset" type="reset"/></td>
+					</tr>
+				</tbody>
+				<tfoot>	
+					<tr>
+						<td><div id="start"> </div></td>
+						<td><div id="end"> </div></td>
+					</tr>
+				</tfoot>
+			</table>
+			<h:inputHidden id="hiddenInstanceId" value="#{creditCardForm.instanceId}" />
+			<h:inputHidden id="hiddenTaskId" value="#{creditCardForm.taskId}" />
+			<f:event type="postValidate" listener="#{creditCardForm.validate}" />
+		</h:form>
+	</ui:define>
+</ui:composition>

@@ -1,0 +1,230 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- This file is not required if you don't need any extra configuration. -->
+<faces-config xmlns="http://java.sun.com/xml/ns/javaee"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="http://java.sun.com/xml/ns/javaee http://java.sun.com/xml/ns/javaee/web-facesconfig_2_0.xsd"
+        version="2.0">
+
+	<!-- JSF backing beans -->
+	<managed-bean>
+		<managed-bean-name>addressForm</managed-bean-name>
+		<managed-bean-class>wfm.web.AddressFormBackingBean</managed-bean-class>
+		<managed-bean-scope>view</managed-bean-scope>
+	</managed-bean>
+	
+	<managed-bean>
+		<managed-bean-name>paymentModalitiesForm</managed-bean-name>
+		<managed-bean-class>wfm.web.PaymentModalitiesFormBackingBean</managed-bean-class>
+		<managed-bean-scope>view</managed-bean-scope>
+	</managed-bean>
+	
+	<managed-bean>
+		<managed-bean-name>couponForm</managed-bean-name>
+		<managed-bean-class>wfm.web.CouponFormBackingBean</managed-bean-class>
+		<managed-bean-scope>view</managed-bean-scope>
+	</managed-bean>
+	
+	<managed-bean>
+		<managed-bean-name>creditCardForm</managed-bean-name>
+		<managed-bean-class>wfm.web.CreditCardFormBackingBean</managed-bean-class>
+		<managed-bean-scope>view</managed-bean-scope>
+	</managed-bean>
+	
+	<managed-bean>
+		<managed-bean-name>bankAccountForm</managed-bean-name>
+		<managed-bean-class>wfm.web.BankAccountFormBackingBean</managed-bean-class>
+		<managed-bean-scope>view</managed-bean-scope>
+	</managed-bean>
+	
+	<managed-bean>
+		<managed-bean-name>acknowledgeForm</managed-bean-name>
+		<managed-bean-class>wfm.web.AcknowledgeFormBackingBean</managed-bean-class>
+		<managed-bean-scope>view</managed-bean-scope>
+	</managed-bean>
+	
+	<managed-bean>
+		<managed-bean-name>orderError</managed-bean-name>
+		<managed-bean-class>wfm.web.OrderErrorBackingBean</managed-bean-class>
+		<managed-bean-scope>view</managed-bean-scope>
+	</managed-bean>
+	
+	<managed-bean>
+		<managed-bean-name>newOrder</managed-bean-name>
+		<managed-bean-class>wfm.web.NewOrderBackingBean</managed-bean-class>
+		<managed-bean-scope>view</managed-bean-scope>
+	</managed-bean>
+	
+	<application>
+		<locale-config>
+			<default-locale>en</default-locale>
+			<supported-locale>en</supported-locale>
+		</locale-config>
+		<message-bundle>messages</message-bundle>
+		<resource-bundle>
+			<base-name>messages</base-name>
+			<var>m</var>
+		</resource-bundle>
+	</application>
+
+	
+	<navigation-rule>
+		<from-view-id>/newOrder.xhtml</from-view-id>
+		<navigation-case>
+			<from-outcome>success</from-outcome>
+			<to-view-id>#{newOrder.page}</to-view-id>
+			<redirect>
+				<view-param>
+					<name>instanceId</name>
+					<value>#{newOrder.instanceId}</value>
+				</view-param>
+				<view-param>
+					<name>taskId</name>
+					<value>#{newOrder.taskId}</value>
+				</view-param>
+			</redirect>
+		</navigation-case>
+	</navigation-rule>
+
+	<navigation-rule>
+		<from-view-id>/addressForm.xhtml</from-view-id>
+		<navigation-case>
+			<from-action>#{addressForm.submit}</from-action>
+			<from-outcome>success</from-outcome>
+			<to-view-id>#{addressForm.page}</to-view-id>
+			<redirect>
+				<view-param>
+					<name>instanceId</name>
+					<value>#{addressForm.instanceId}</value>
+				</view-param>
+				<view-param>
+					<name>taskId</name>
+					<value>#{addressForm.taskId}</value>
+				</view-param>
+			</redirect>
+		</navigation-case>
+		<navigation-case>
+			<from-action>#{addressForm.submit}</from-action>
+			<from-outcome>error</from-outcome>
+			<to-view-id>/addressForm.xhtml</to-view-id>
+			<redirect>
+				<view-param>
+					<name>instanceId</name>
+					<value>#{addressForm.instanceId}</value>
+				</view-param>
+				<view-param>
+					<name>taskId</name>
+					<value>#{addressForm.taskId}</value>
+				</view-param>
+			</redirect>
+		</navigation-case>
+	</navigation-rule>
+	
+	<navigation-rule>
+		<from-view-id>/couponForm.xhtml</from-view-id>
+		<navigation-case>
+			<from-outcome>success</from-outcome>
+			<to-view-id>#{couponForm.page}</to-view-id>
+			<redirect>
+				<view-param>
+					<name>instanceId</name>
+					<value>#{couponForm.instanceId}</value>
+				</view-param>
+				<view-param>
+					<name>taskId</name>
+					<value>#{couponForm.taskId}</value>
+				</view-param>			
+			</redirect>
+		</navigation-case>
+	</navigation-rule>
+	
+	<navigation-rule>
+		<from-view-id>/paymentModalitiesForm.xhtml</from-view-id>
+		<navigation-case>
+			<from-outcome>success</from-outcome>
+			<to-view-id>#{paymentModalitiesForm.page}</to-view-id>
+			<redirect>
+				<view-param>
+					<name>instanceId</name>
+					<value>#{paymentModalitiesForm.instanceId}</value>
+				</view-param>
+				<view-param>
+					<name>taskId</name>
+					<value>#{paymentModalitiesForm.taskId}</value>
+				</view-param>			
+			</redirect>
+		</navigation-case>
+	</navigation-rule>
+	
+	<navigation-rule>
+		<from-view-id>/bankAccountForm.xhtml</from-view-id>
+		<navigation-case>
+			<from-outcome>success</from-outcome>
+			<to-view-id>#{bankAccountForm.page}</to-view-id>
+			<redirect>
+				<view-param>
+					<name>instanceId</name>
+					<value>#{bankAccountForm.instanceId}</value>
+				</view-param>
+				<view-param>
+					<name>taskId</name>
+					<value>#{bankAccountForm.taskId}</value>
+				</view-param>			
+			</redirect>
+		</navigation-case>
+	</navigation-rule>
+	
+	<navigation-rule>
+		<from-view-id>/creditCardForm.xhtml</from-view-id>
+		<navigation-case>
+			<from-outcome>success</from-outcome>
+			<to-view-id>#{creditCardForm.page}</to-view-id>
+			<redirect>
+				<view-param>
+					<name>instanceId</name>
+					<value>#{creditCardForm.instanceId}</value>
+				</view-param>
+				<view-param>
+					<name>taskId</name>
+					<value>#{creditCardForm.taskId}</value>
+				</view-param>			
+			</redirect>
+		</navigation-case>
+	</navigation-rule>
+	
+	<navigation-rule>
+		<from-view-id>/acknowledgeForm.xhtml</from-view-id>
+		<navigation-case>
+			<from-action>#{acknowledgeForm.submit}</from-action>
+			<from-outcome>success</from-outcome>
+			<to-view-id>/orderEnd.jsf</to-view-id>
+			<redirect>
+				<view-param>
+					<name>instanceId</name>
+					<value>#{acknowledgeForm.instanceId}</value>
+				</view-param>
+				<view-param>
+					<name>taskId</name>
+					<value>#{acknowledgeForm.taskId}</value>
+				</view-param>			
+			</redirect>
+		</navigation-case>
+		<navigation-case>
+			<from-action>#{acknowledgeForm.submit}</from-action>
+			<from-outcome>error</from-outcome>
+			<to-view-id>/orderError.jsf</to-view-id>
+			<redirect>
+				<view-param>
+					<name>instanceId</name>
+					<value>#{acknowledgeForm.instanceId}</value>
+				</view-param>
+			</redirect>
+		</navigation-case>
+		<navigation-case>
+			<from-action>#{acknowledgeForm.cancel}</from-action>
+			<from-outcome>canceled</from-outcome>
+			<to-view-id>/newOrder.jsf</to-view-id>
+			<redirect />
+		</navigation-case>
+	</navigation-rule>
+	
+</faces-config>

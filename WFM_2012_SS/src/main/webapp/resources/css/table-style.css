@@ -1,0 +1,121 @@
+@CHARSET "ISO-8859-1";
+
+body
+{
+	
+}
+
+table.rounded-corner
+{
+	font-family: "Lucida Sans Unicode", "Lucida Grande", Sans-Serif;
+	font-size: 12px;
+	margin-left: auto;
+	margin-right: auto;
+	margin-bottom: 10px;
+	text-align: left;
+	border: 0px; 
+	cellpadding: 0px; 
+	cellspacing: 0px;
+	border-collapse: collapse;
+}
+
+.rounded-corner tr.odd
+{
+	padding: 4px;
+	background: #eff2ff;
+	border-top: 1px solid #fff;
+	color: #669;
+}
+.rounded-corner tr.even
+{
+	padding: 4px;
+	background: #e8edff;
+	border-top: 1px solid #fff;
+	color: #669;
+}
+
+.rounded-corner thead th div#start
+{
+	background: #b9c9fe url("#{resource['images:left.png']}") left -1px no-repeat;
+}
+.rounded-corner thead th div.start
+{
+	background: #b9c9fe url("#{resource['images:left.png']}") left -1px no-repeat;
+	width: 38.2%%;
+	float: left;
+}
+.rounded-corner thead th div#mid
+{
+	background: #b9c9fe;
+}
+.rounded-corner thead th div#end
+{
+	background: #b9c9fe url("#{resource['images:right.png']}") right -1px no-repeat;
+}
+.rounded-corner thead th div.end
+{
+	background: #b9c9fe url("#{resource['images:right.png']}") right -1px no-repeat;
+	width: 50%;
+	float: right;
+}
+.rounded-corner thead th div
+{
+	padding: 8px;
+	min-height: 21px;
+	font-weight: normal;
+	font-size: 13px;
+	color: #039;
+	background: #b9c9fe
+}
+.rounded-corner thead th
+{
+	padding: 0px;
+	colspan: 1;
+}
+
+.rounded-corner tfoot td div#start
+{
+	background: #e8edff url("#{resource['images:botleft.png']}") left bottom no-repeat;
+}
+.rounded-corner tfoot td div.start
+{
+	background: #e8edff url("#{resource['images:botleft.png']}") left bottom no-repeat;
+	width: 46.6%;
+	float: left;
+}
+.rounded-corner tfoot td div#mid
+{
+	background: #e8edff left bottom no-repeat;
+}
+.rounded-corner tfoot td div#end
+{
+	background: #e8edff url("#{resource['images:botright.png']}") right bottom no-repeat;
+}
+.rounded-corner tfoot td div.end
+{
+	background: #e8edff url("#{resource['images:botright.png']}") right bottom no-repeat;
+	width: 46%;
+	float: right;
+}
+.rounded-corner tfoot td div
+{
+	padding: 5px;
+	font-weight: normal;
+	font-size: 10px;
+	color: #669;
+	background: #e8edff
+}
+.rounded-corner tfoot td
+{
+	padding: 0px;
+}
+
+.rounded-corner tbody td
+{
+	padding-left: 8px;
+	padding-right: 8px;
+}
+.rounded-corner tbody tr:hover td
+{
+	background: #d0dafd;
+}

@@ -1,0 +1,159 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<definitions xmlns="http://www.omg.org/spec/BPMN/20100524/MODEL" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:activiti="http://activiti.org/bpmn" xmlns:bpmndi="http://www.omg.org/spec/BPMN/20100524/DI" xmlns:omgdc="http://www.omg.org/spec/DD/20100524/DC" xmlns:omgdi="http://www.omg.org/spec/DD/20100524/DI" typeLanguage="http://www.w3.org/2001/XMLSchema" expressionLanguage="http://www.w3.org/1999/XPath" targetNamespace="http://www.activiti.org/test">
+  <process id="AddressValidationProcess" name="Address Validation Process">
+    <startEvent id="start" name="Start"></startEvent>
+    <userTask id="getAddress" name="get address" activiti:assignee="kermit">
+      <extensionElements>
+        <activiti:formProperty id="firstName" name="First Name" type="string" required="true"></activiti:formProperty>
+        <activiti:formProperty id="lastName" name="Last Name" type="string" required="true"></activiti:formProperty>
+        <activiti:formProperty id="street" name="Street" type="string" required="true"></activiti:formProperty>
+        <activiti:formProperty id="city" name="City" type="string" required="true"></activiti:formProperty>
+        <activiti:formProperty id="zip" name="Zip" type="string" required="true"></activiti:formProperty>
+        <activiti:formProperty id="country" name="Country" type="string" required="true"></activiti:formProperty>
+        <activiti:formProperty id="telephone" name="Telephone number" type="string" required="false"></activiti:formProperty>
+      </extensionElements>
+    </userTask>
+    <subProcess id="addressValidation" name="Address Validation">
+      <startEvent id="startAddressValidation" name="Start"></startEvent>
+      <serviceTask id="validateAddress" name="validate address" activiti:class="wfm.addressValidation.AddressValidationWSBehavior">
+        <extensionElements>
+          <activiti:field name="service">
+            <activiti:string>http://localhost:63082</activiti:string>
+          </activiti:field>
+          <activiti:field name="successPath">
+            <activiti:string>validateAddress_endAddressValidation</activiti:string>
+          </activiti:field>
+          <activiti:field name="errorPath">
+            <activiti:string>validateAddress_errorAddressValidation</activiti:string>
+          </activiti:field>
+          <activiti:field name="firstName">
+            <activiti:expression>${firstName}</activiti:expression>
+          </activiti:field>
+          <activiti:field name="lastName">
+            <activiti:expression>${lastName}</activiti:expression>
+          </activiti:field>
+          <activiti:field name="street">
+            <activiti:expression>${street}</activiti:expression>
+          </activiti:field>
+          <activiti:field name="city">
+            <activiti:expression>${city}</activiti:expression>
+          </activiti:field>
+          <activiti:field name="zip">
+            <activiti:expression>${zip}</activiti:expression>
+          </activiti:field>
+          <activiti:field name="country">
+            <activiti:expression>${country}</activiti:expression>
+          </activiti:field>
+          <activiti:field name="telNo">
+            <activiti:expression>${telephone}</activiti:expression>
+          </activiti:field>
+        </extensionElements>
+      </serviceTask>
+      <endEvent id="errorAddressValidation" name="ErrorEnd">
+        <errorEventDefinition errorRef="addressValidationError"></errorEventDefinition>
+      </endEvent>
+      <endEvent id="endAddressValidation" name="End"></endEvent>
+      <sequenceFlow id="startAddressValidation_validateAddress" name="" sourceRef="startAddressValidation" targetRef="validateAddress"></sequenceFlow>
+      <sequenceFlow id="validateAddress_endAddressValidation" name="valid address" sourceRef="validateAddress" targetRef="endAddressValidation"></sequenceFlow>
+      <sequenceFlow id="validateAddress_errorAddressValidation" name="invalid address" sourceRef="validateAddress" targetRef="errorAddressValidation"></sequenceFlow>
+    </subProcess>
+    <boundaryEvent id="boundaryerror1" cancelActivity="true" attachedToRef="addressValidation">
+      <errorEventDefinition errorRef="addressValidationError"></errorEventDefinition>
+    </boundaryEvent>
+    <scriptTask id="validationError" name="validation error" scriptFormat="groovy">
+      <script><![CDATA[execution.setVariable('validationError','Invalid address entered!')
+execution.setVariable('firstName', '')
+execution.setVariable('lastName', '')
+execution.setVariable('street', '')
+execution.setVariable('zip', '')
+execution.setVariable('city', '')
+execution.setVariable('telephone', '')]]></script>
+    </scriptTask>
+    <endEvent id="end" name="End"></endEvent>
+    <scriptTask id="scripttask1" name="Script Task" scriptFormat="groovy">
+      <script><![CDATA[out:println 'Name: ' + firstName + ' ' + lastName]]></script>
+    </scriptTask>
+    <sequenceFlow id="start_getAddress" name="" sourceRef="start" targetRef="getAddress"></sequenceFlow>
+    <sequenceFlow id="addressValidation_validationError" name="" sourceRef="boundaryerror1" targetRef="validationError"></sequenceFlow>
+    <sequenceFlow id="validationError_getAddress" name="" sourceRef="validationError" targetRef="getAddress"></sequenceFlow>
+    <sequenceFlow id="getAddress_AddressValidation" name="" sourceRef="getAddress" targetRef="addressValidation"></sequenceFlow>
+    <sequenceFlow id="addressValidation_end" name="" sourceRef="addressValidation" targetRef="scripttask1"></sequenceFlow>
+    <sequenceFlow id="flow1" name="" sourceRef="scripttask1" targetRef="end"></sequenceFlow>
+  </process>
+  <bpmndi:BPMNDiagram id="BPMNDiagram_AddressValidationProcess">
+    <bpmndi:BPMNPlane bpmnElement="AddressValidationProcess" id="BPMNPlane_AddressValidationProcess">
+      <bpmndi:BPMNShape bpmnElement="start" id="BPMNShape_start">
+        <omgdc:Bounds height="35" width="35" x="70" y="190"></omgdc:Bounds>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape bpmnElement="getAddress" id="BPMNShape_getAddress">
+        <omgdc:Bounds height="55" width="105" x="161" y="180"></omgdc:Bounds>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape bpmnElement="addressValidation" id="BPMNShape_addressValidation" isExpanded="true">
+        <omgdc:Bounds height="205" width="381" x="380" y="105"></omgdc:Bounds>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape bpmnElement="startAddressValidation" id="BPMNShape_startAddressValidation">
+        <omgdc:Bounds height="35" width="35" x="390" y="172"></omgdc:Bounds>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape bpmnElement="validateAddress" id="BPMNShape_validateAddress">
+        <omgdc:Bounds height="55" width="105" x="460" y="162"></omgdc:Bounds>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape bpmnElement="errorAddressValidation" id="BPMNShape_errorAddressValidation">
+        <omgdc:Bounds height="35" width="35" x="690" y="235"></omgdc:Bounds>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape bpmnElement="endAddressValidation" id="BPMNShape_endAddressValidation">
+        <omgdc:Bounds height="35" width="35" x="690" y="172"></omgdc:Bounds>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNEdge bpmnElement="startAddressValidation_validateAddress" id="BPMNEdge_startAddressValidation_validateAddress">
+        <omgdi:waypoint x="425" y="189"></omgdi:waypoint>
+        <omgdi:waypoint x="460" y="189"></omgdi:waypoint>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge bpmnElement="validateAddress_endAddressValidation" id="BPMNEdge_validateAddress_endAddressValidation">
+        <omgdi:waypoint x="565" y="189"></omgdi:waypoint>
+        <omgdi:waypoint x="690" y="189"></omgdi:waypoint>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge bpmnElement="validateAddress_errorAddressValidation" id="BPMNEdge_validateAddress_errorAddressValidation">
+        <omgdi:waypoint x="512" y="217"></omgdi:waypoint>
+        <omgdi:waypoint x="512" y="252"></omgdi:waypoint>
+        <omgdi:waypoint x="690" y="252"></omgdi:waypoint>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNShape bpmnElement="boundaryerror1" id="BPMNShape_boundaryerror1">
+        <omgdc:Bounds height="30" width="30" x="490" y="290"></omgdc:Bounds>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape bpmnElement="validationError" id="BPMNShape_validationError">
+        <omgdc:Bounds height="55" width="105" x="290" y="390"></omgdc:Bounds>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape bpmnElement="end" id="BPMNShape_end">
+        <omgdc:Bounds height="35" width="35" x="950" y="190"></omgdc:Bounds>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape bpmnElement="scripttask1" id="BPMNShape_scripttask1">
+        <omgdc:Bounds height="55" width="105" x="810" y="180"></omgdc:Bounds>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNEdge bpmnElement="start_getAddress" id="BPMNEdge_start_getAddress">
+        <omgdi:waypoint x="105" y="207"></omgdi:waypoint>
+        <omgdi:waypoint x="161" y="207"></omgdi:waypoint>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge bpmnElement="addressValidation_validationError" id="BPMNEdge_addressValidation_validationError">
+        <omgdi:waypoint x="505" y="320"></omgdi:waypoint>
+        <omgdi:waypoint x="504" y="417"></omgdi:waypoint>
+        <omgdi:waypoint x="395" y="417"></omgdi:waypoint>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge bpmnElement="validationError_getAddress" id="BPMNEdge_validationError_getAddress">
+        <omgdi:waypoint x="290" y="417"></omgdi:waypoint>
+        <omgdi:waypoint x="213" y="417"></omgdi:waypoint>
+        <omgdi:waypoint x="213" y="235"></omgdi:waypoint>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge bpmnElement="getAddress_AddressValidation" id="BPMNEdge_getAddress_AddressValidation">
+        <omgdi:waypoint x="266" y="207"></omgdi:waypoint>
+        <omgdi:waypoint x="380" y="207"></omgdi:waypoint>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge bpmnElement="addressValidation_end" id="BPMNEdge_addressValidation_end">
+        <omgdi:waypoint x="761" y="207"></omgdi:waypoint>
+        <omgdi:waypoint x="810" y="207"></omgdi:waypoint>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge bpmnElement="flow1" id="BPMNEdge_flow1">
+        <omgdi:waypoint x="915" y="207"></omgdi:waypoint>
+        <omgdi:waypoint x="950" y="207"></omgdi:waypoint>
+      </bpmndi:BPMNEdge>
+    </bpmndi:BPMNPlane>
+  </bpmndi:BPMNDiagram>
+</definitions>

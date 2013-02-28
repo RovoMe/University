@@ -1,0 +1,57 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:h="http://java.sun.com/jsf/html"
+	template="/WEB-INF/templates/template.xhtml">
+	<ui:define name="content">
+		<f:metadata>
+    		<f:viewParam name="instanceId" value="#{bankAccountForm.instanceId}" />
+    		<f:viewParam name="taskId" value="#{bankAccountForm.taskId}" />
+		</f:metadata>
+		
+		<h1>#{m.bankAccountForm_title}</h1>
+		<p>#{m.bankAccountForm_description}</p>
+		<h:form id="bankAccountForm">				
+			<table class="rounded-corner">
+				<thead>
+					<tr>
+						<th scope="col"><div id="start">Bank account information</div></th>
+						<th scope="col"><div id="end"> </div></th>
+					</tr>
+				</thead>
+				<tbody>
+					<tr class="odd">
+						<td><h:outputText value="#{m.bankAccountForm_bankName}" /></td>
+						<td><h:inputText id="bankName" value="#{bankAccountForm.bankName}" required="true"/></td>
+					</tr>
+					<tr class="even">
+						<td><h:outputText value="#{m.bankAccountForm_bankCode}" /></td>
+						<td><h:inputText id="bankCode" value="#{bankAccountForm.bankCode}" required="true"/></td>
+					</tr>
+					<tr class="odd">
+						<td><h:outputText value="#{m.bankAccountForm_accountNumber}" /></td>
+						<td><h:inputText id="accountNumber" value="#{bankAccountForm.accountNumber}" required="true"/></td>
+					</tr>
+					<tr class="even">
+						<td><h:outputText value="#{m.bankAccountForm_holdersName}" /></td>
+						<td><h:inputText id="holdersName" value="#{bankAccountForm.holdersName}" required="true"/></td>
+					</tr>
+					<tr class="even">
+						<td></td>
+						<td><h:commandButton value="Submit" type="submit" action="#{bankAccountForm.submit}" /> <h:commandButton value="Reset" type="reset"/></td>
+					</tr>
+				</tbody>
+				<tfoot>	
+					<tr>
+						<td><div id="start"> </div></td>
+						<td><div id="end"> </div></td>
+					</tr>
+				</tfoot>
+			</table>
+			<h:inputHidden id="hiddenInstanceId" value="#{bankAccountForm.instanceId}" />
+			<h:inputHidden id="hiddenTaskId" value="#{bankAccountForm.taskId}" />
+			<f:event type="postValidate" listener="#{bankAccountForm.validate}" />
+		</h:form>
+	</ui:define>
+</ui:composition>
