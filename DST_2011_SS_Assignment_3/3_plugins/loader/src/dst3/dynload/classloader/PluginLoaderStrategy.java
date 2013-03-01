@@ -42,6 +42,7 @@ public class PluginLoaderStrategy implements IClassLoaderStrategy
 		
 		byte[] classBytes = null;
 
+		JarFile jarFile = null;
 		try 
 		{
 			// A jar-file doesn't get loaded all by itself, URLClassLoader does a pretty good job
@@ -50,6 +51,7 @@ public class PluginLoaderStrategy implements IClassLoaderStrategy
 			// a valid reference to our jar-file we have to find our class inside the jar-archive.
 			// All entries inside the archive are of type ZipEntry, together with the getInputStream
 			// of JarFile we are now able to get the needed bytes out of the jar-archive
+			
 			if (urlClassPath != null)
 			{
 				// Windows and Linux differ drastically in how files have to be
@@ -69,7 +71,7 @@ public class PluginLoaderStrategy implements IClassLoaderStrategy
 				if (!file.exists())
 					throw new FileNotFoundException("Could not find: '"+urlClassPath+"'");
 				// we are inside a jar-File
-				JarFile jarFile = new JarFile(file);
+				jarFile = new JarFile(file);
 				// lets get a reference to our .class-file
 				ZipEntry zipEntry = jarFile.getEntry(className.replace(".", "/")+".class");
 				if (zipEntry == null)
@@ -78,6 +80,7 @@ public class PluginLoaderStrategy implements IClassLoaderStrategy
 				InputStream fis = jarFile.getInputStream(zipEntry);
 				classBytes = new byte[fis.available()];
 				fis.read(classBytes);
+				fis.close();
 			}
 			else
 			{
@@ -96,6 +99,20 @@ public class PluginLoaderStrategy implements IClassLoaderStrategy
 		catch (IOException e) 
 		{
 			e.printStackTrace();
+		}
+		finally
+		{
+			if (jarFile != null)
+			{
+				try 
+				{
+					jarFile.close();
+				} 
+				catch (IOException e) 
+				{
+					e.printStackTrace();
+				}
+			}
 		}
 		return classBytes;
 	}

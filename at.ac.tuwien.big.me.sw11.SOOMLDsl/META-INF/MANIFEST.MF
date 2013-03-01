@@ -1,0 +1,27 @@
+Manifest-Version: 1.0
+Bundle-ManifestVersion: 2
+Bundle-Name: at.ac.tuwien.big.me.sw11.SOOMLDsl
+Bundle-Vendor: My Company
+Bundle-Version: 1.0.0.qualifier
+Bundle-SymbolicName: at.ac.tuwien.big.me.sw11.SOOMLDsl; singleton:=true
+Bundle-ActivationPolicy: lazy
+Require-Bundle: org.eclipse.xtext;visibility:=reexport,
+ org.eclipse.xtext.xbase;resolution:=optional;visibility:=reexport,
+ org.eclipse.xtext.generator;resolution:=optional,
+ org.apache.commons.logging;bundle-version="1.0.4";resolution:=optional,
+ org.eclipse.emf.codegen.ecore;resolution:=optional,
+ org.eclipse.emf.mwe.utils;resolution:=optional,
+ org.eclipse.emf.mwe2.launch;resolution:=optional,
+ ME_2011_WS_Lab1,
+ org.eclipse.xtext.util,
+ org.antlr.runtime
+Import-Package: org.apache.log4j
+Bundle-RequiredExecutionEnvironment: JavaSE-1.7
+Export-Package: at.ac.tuwien.big.me.sw11,
+ at.ac.tuwien.big.me.sw11.services,
+ at.ac.tuwien.big.me.sw11.parseTreeConstruction,
+ at.ac.tuwien.big.me.sw11.parser.antlr,
+ at.ac.tuwien.big.me.sw11.parser.antlr.internal,
+ at.ac.tuwien.big.me.sw11.validation,
+ at.ac.tuwien.big.me.sw11.scoping,
+ at.ac.tuwien.big.me.sw11.formatting

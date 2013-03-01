@@ -1,0 +1,21 @@
+Manifest-Version: 1.0
+Bundle-ManifestVersion: 2
+Bundle-Name: at.ac.tuwien.big.me.sw11.SOOMLDsl.ui
+Bundle-Vendor: My Company
+Bundle-Version: 1.0.0.qualifier
+Bundle-SymbolicName: at.ac.tuwien.big.me.sw11.SOOMLDsl.ui; singleton:=true
+Bundle-ActivationPolicy: lazy
+Require-Bundle: at.ac.tuwien.big.me.sw11.SOOMLDsl;visibility:=reexport,
+ org.eclipse.xtext.ui,
+ org.eclipse.ui.editors;bundle-version="3.5.0",
+ org.eclipse.ui.ide;bundle-version="3.5.0",
+ org.eclipse.xtext.ui.shared,
+ org.eclipse.ui,
+ org.antlr.runtime,
+ org.eclipse.compare,
+ org.eclipse.xtext.builder
+Import-Package: org.apache.log4j
+Bundle-RequiredExecutionEnvironment: JavaSE-1.7
+Export-Package: at.ac.tuwien.big.me.sw11.ui.contentassist,
+ at.ac.tuwien.big.me.sw11.ui.contentassist.antlr
+Bundle-Activator: at.ac.tuwien.big.me.sw11.ui.internal.SOOMLDslActivator

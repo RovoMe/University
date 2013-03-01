@@ -1,0 +1,82 @@
+package MowerSystem
+
+-------------------------------------------------------------------------------
+--                                T A S K S                                  --
+-------------------------------------------------------------------------------
+
+-- Attributes must not have the data type COMPLEX
+context Attribute
+inv: self.dataType <> DataType::Complex
+
+-- The entry operation of a state has to be an operation of the class for witch 
+-- the state is defined
+context State
+inv: self.entryOperation <> null implies Class.allInstances() -> 
+		select(c : Class | c.stateMachine.states->includes(self)).operations -> 
+			includes(self.entryOperation.calledOperation)
+
+-- The target state of a transition has to be a state of the same state machine
+context StateMachine
+inv: StateMachine.allInstances() -> 
+		select(sm : StateMachine | sm.states.transitions->includes(self)).states -> 
+			includes(self.target)
+
+-- The two references that define a bidirectional relationship have to reference 
+-- each other as opposite
+context Reference
+inv: self.opposite->notEmpty() implies self.opposite.opposite=self 
+
+-- the type of a reference must be the class for which the opposite reference is 
+-- defined
+context Reference
+inv: self.opposite <> null implies Class.allInstances() -> 
+		select(c : Class | c.features->includes(self.opposite)) -> 
+			includes(self.type)
+
+-- works the same way as above:			
+-- self.opposite <> null implies Class.allInstances() -> 
+--		select(c : Class | c = self.type).features -> 
+--			includes(self.opposite)
+
+-------------------------------------------------------------------------------
+--                               T E S T S                                   --
+-------------------------------------------------------------------------------
+
+-- Check if initial state is a state of this state machine
+context StateMachine
+inv: self.states -> 
+		includes(self.initialState)
+
+-- Get all states of a state machine
+context StateMachine
+inv: self.states -> 
+		select(s : State | s <> null)
+
+-- Get all defined entry operations for this package
+context Package
+inv: Class.allInstances().stateMachine.states.entryOperation -> 
+		select(e : EntryOperation | e <> null).calledOperation
+
+-- Get all defined entry operations for a selected class
+context Class
+inv: Class.allInstances() -> 
+		select(c : Class | c = self).stateMachine.states.entryOperation -> 
+			select(e : EntryOperation | e <> null).calledOperation
+
+-- Get the entry operation for a defined state
+context State
+inv: Class.allInstances().stateMachine.states -> 
+		select(s : State | s = self).entryOperation -> 
+				select(e : EntryOperation | e <> null).calledOperation
+
+-- Get class of a selected state
+context State
+inv: Class.allInstances() -> 
+		select(c : Class | c.stateMachine.states -> 
+			includes(self))
+
+-- Get all methods of a class which contains a selected state
+context State
+inv: Class.allInstances() -> 
+		select(c : Class | c.stateMachine.states -> 
+			includes(self)).operations

@@ -1,0 +1,13 @@
+*.class
+
+# Package Files #
+*.war
+*.ear
+
+
+bin
+
+build/
+.project
+.classpath
+.settings
